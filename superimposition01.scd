@@ -151,8 +151,109 @@ OSCdef(\restart, {
 };
 )
 
+(
+//notation
+//ix, nbts, div, startbt(float), end(float), track
+//make 8th notes - 0
+~proc.sendMsg("/mktup1", 0, 1, 2, 0.0, 16.0);
+//make 7:3 notes - 1
+~proc.sendMsg("/mktup1", 1, 3, 7, 0.0, 16.0);
+//make 17:7 notes - 2
+~proc.sendMsg("/mktup1", 2, 7, 17, 0.0, 16.0);
+//make 3:5, 11:7 notes - 3
+~proc.sendMsg("/mktup2", 3, 5, 3, 7, 11, 0.0, 16.0);
 
-work on notations
+//make rhythm
+~proc.sendMsg("/mkrhythm", 0, 0); //- 8th
+~proc.sendMsg("/adrhythm", 0, 0.0, 16.0, 0);
+~proc.sendMsg("/mkrhythm", 1, 0); //- 7:3
+~proc.sendMsg("/adrhythm", 1, 0.0, 16.0, 1);
+~proc.sendMsg("/mkrhythm", 2, 0); //- 17:7
+~proc.sendMsg("/adrhythm", 2, 0.0, 16.0, 2);
+~proc.sendMsg("/mkrhythm", 3, 0); //- 3:5, 11:7
+~proc.sendMsg("/adrhythm", 3, 0.0, 16.0, 3);
+~proc.sendMsg("/mkrhythm", 100, 1); //- 8th
+~proc.sendMsg("/adrhythm", 100, 0.0, 16.0, 0);
+~proc.sendMsg("/mkrhythm", 101, 1); //- 7:3
+~proc.sendMsg("/adrhythm", 101, 0.0, 16.0, 1);
+~proc.sendMsg("/mkrhythm", 102, 1); //- 17:7
+~proc.sendMsg("/adrhythm", 102, 0.0, 16.0, 2);
+~proc.sendMsg("/mkrhythm", 103, 1); //- 3:5, 11:7
+~proc.sendMsg("/adrhythm", 103, 0.0, 16.0, 3);
+
+
+~proc.sendMsg("/mkrhythm", 4, 0); // 4 - composit
+~proc.sendMsg("/adrhythm", 4, 0.0, 16.0, 3);
+~proc.sendMsg("/adrhythm", 4, 0.0, 16.0, 2);
+
+~proc.sendMsg("/mkrhythm", 104, 1); // 104 - composit
+~proc.sendMsg("/adrhythm", 104, 0.0, 16.0, 3);
+~proc.sendMsg("/adrhythm", 104, 0.0, 16.0, 2);
+
+
+~proc.sendMsg("/mkrhythm", 5, 0); // 5 - composit
+~proc.sendMsg("/adrhythm", 5, 0.0, 16.0, 3);
+~proc.sendMsg("/adrhythm", 5, 0.0, 16.0, 2);
+~proc.sendMsg("/adrhythm", 5, 0.0, 16.0, 1);
+
+~proc.sendMsg("/mkrhythm", 105, 1); // 105 - composit
+~proc.sendMsg("/adrhythm", 105, 0.0, 16.0, 3);
+~proc.sendMsg("/adrhythm", 105, 0.0, 16.0, 2);
+~proc.sendMsg("/adrhythm", 105, 0.0, 16.0, 1);
+
+
+~proc.sendMsg("/alset", 4, "2,0,4,6,0,1");
+~proc.sendMsg("/alset", 104, "5,2,2,7,1");
+~proc.sendMsg("/alset", 5, "6,3,4,8,2,3,1,0,5");
+~proc.sendMsg("/alset", 105, "3,7,2");
+)
+
+
+//8th
+~proc.sendMsg("/drtog", 0, 1);
+~proc.sendMsg("/drtog", 0, 0);
+
+~proc.sendMsg("/drtog", 100, 1);
+~proc.sendMsg("/drtog", 100, 0);
+
+//7:3
+~proc.sendMsg("/drtog", 1, 1);
+~proc.sendMsg("/drtog", 1, 0);
+
+~proc.sendMsg("/drtog", 101, 1);
+~proc.sendMsg("/drtog", 101, 0);
+
+//17:7
+~proc.sendMsg("/drtog", 2, 1);
+~proc.sendMsg("/drtog", 2, 0);
+
+~proc.sendMsg("/drtog", 102, 1);
+~proc.sendMsg("/drtog", 102, 0);
+
+//3:5, 11:7
+~proc.sendMsg("/drtog", 3, 1);
+~proc.sendMsg("/drtog", 3, 0);
+
+~proc.sendMsg("/drtog", 103, 1);
+~proc.sendMsg("/drtog", 103, 0);
+
+//combo 1
+~proc.sendMsg("/drtog", 4, 1);
+~proc.sendMsg("/drtog", 4, 0);
+
+~proc.sendMsg("/drtog", 104, 1);
+~proc.sendMsg("/drtog", 104, 0);
+
+//combo 2
+~proc.sendMsg("/drtog", 5, 1);
+~proc.sendMsg("/drtog", 5, 0);
+
+~proc.sendMsg("/drtog", 105, 1);
+~proc.sendMsg("/drtog", 105, 0);
+
+
+//fix add rhythm so that no conflict with start and end beats
+//add algorithms and a draw set
 
 
 

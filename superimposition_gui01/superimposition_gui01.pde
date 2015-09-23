@@ -1,3 +1,21 @@
+
+
+
+//make sets of tuplets
+//way of arranging which partials to display
+//algorthim of choosing various tuplets and partials
+//arrays of x values
+// random choosing of the array with beat range 
+//find min and max partials, then random for those partials
+//classify, oscify
+
+
+//make a bunch of tuplets
+//function to grab tuplet, give range and algorithm, and store in array
+//trigger to draw
+
+
+
 import oscP5.*;
 import netP5.*;
 import processing.serial.*;
@@ -8,13 +26,13 @@ String serialmsg;
 
 OscP5 osc;
 NetAddress sc;
-int h = 640;
-int w = 1000;
+int h = 900;
+int w = 1600;
 int x0 = 25;
 int trht, trhf;
 float cx=0;
 float[]tcx;
-int numtrx = 8;
+int numtrx = 4;
 int[] rectogs, playtogs, rangex1, rangex2, ranger, trcsr;
 
 int bufsize;
@@ -23,7 +41,8 @@ float[][] samparrays;
 int totalbts = 16;
 int btspermes = 4;
 int totalmes=4;
-float mesw, btw, trw;
+float mesw, trw;
+float btw;
 
 boolean serialon = false;
 
@@ -44,6 +63,17 @@ void setup() {
   sc = new NetAddress("127.0.0.1", 57120);
   osc.plug(this, "ix", "/ix");
   osc.plug(this, "trix", "/trix");
+  
+  osc.plug(setOTup, "mk1", "/mktup1");
+  osc.plug(setOTup, "mk2", "/mktup2");
+  osc.plug(setOTup, "rmv", "/rmvtup");
+  osc.plug(setORmkr, "mk", "/mkrhythm");
+  osc.plug(setORmkr, "rmv", "/rmvrhythm");
+  osc.plug(setORmkr, "ad", "/adrhythm");
+  osc.plug(setORmkr, "drtog", "/drtog");
+  osc.plug(setORmkr, "trk", "/chgtrk");
+  osc.plug(setORmkr, "alset", "/alset");
+  
    
   trw = w-x0;
   bufsize = int(trw);
@@ -161,6 +191,9 @@ void draw() {
     noStroke();
     for (int i=0; i<totalbts; i++) ellipse( (btw*i)+x0, (trht*j)+(trht/2), 7, 7 );
   }
+  
+  //draw rhythms
+  setORmkr.drw();
 
   //waveform display
   stroke(255, 153, 51);
