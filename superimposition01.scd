@@ -1,16 +1,11 @@
 (
 ////VARIABLES////
-~numtrx = 8;
-~ixsynths = Array.newClear(~numtrx+1); //initialize new array to hold record index synths, ~numtrx+1 is so ~ixbufs[0] could be a master index
-~recsynths = Array.newClear(~numtrx); //initialize new array to hold record synths
-~playsynths = Array.newClear(~numtrx); //initialize new array to hold play synths
+~numtrx = 2;
+~ixsynths = Array.newClear(~numtrx+1);
 ~ixbufs = {Buffer.alloc(s, s.sampleRate*16.0, 1)}!(~numtrx+1); //buffers to hold current index location, notice it is 16 seconds long, or 4 4_4 bars at bpm=60 (s.sampleRate*16.0);
-~trx = {Buffer.alloc(s, s.sampleRate * 16.0, 1)}!~numtrx; //buffers to hold track audio
 ~ixbuses = {Bus.audio(s)}!(~numtrx+1); //audio rate busses to hold index location
 ~ixkbuses = {Bus.control(s)}!(~numtrx+1); //control rate busses to hold index location, for waveform display
 ~ixgr = Group.new(); //ix group before all groups
-~ingr = Group.after(~ixgr); //in group for incomming (rec) audio
-~ogr = Group.after(~ingr); //out group for outgoing (play) audio
 ~proc = NetAddr("127.0.0.1", 12321); //net sender to processing
 
 ////SYNTHDEFS////
@@ -26,47 +21,6 @@ SynthDef(\bufidx,{
 	Out.ar(bus, indexer);
 	Out.kr(kbus, indexnorm);
 }).add;
-
-SynthDef(\bufrec, {
-	arg ich=0, idxbus, buf, gate=0;
-	var in, idx, env;
-	env = EnvGen.ar(Env.asr(releaseTime:0.01, curve:0),gate);
-	idx = In.ar(idxbus);
-	in = SoundIn.ar(ich);
-	BufWr.ar(in*env, buf, idx);
-}).add;
-
-SynthDef(\bufpl, {
-	arg idxbus, obs=0, buf, gate=1;
-	var idx, sig, env;
-	env = EnvGen.ar(Env.asr(releaseTime:0.01, curve:0),gate);
-	idx = In.ar(idxbus);
-	sig = BufRd.ar(1, buf, idx);
-	Out.ar(obs, sig*env);
-}).add;
-
-////FUNCTIONS////
-//Function to collect & send waveform display data
-~waveform = { |buf trkn|
-	var bufarray, sampsize, resamp, resampArray, ct;
-	buf.loadToFloatArray( action:{
-		arg array;
-		var bufarray, sampsize, resamp, resampArray, ct;
-		bufarray = array;
-		//RESAMPLE TO MANAGEABLE SIZE
-		sampsize = 975; //Make sure to change this if you change pixel width of sampler
-		resamp = (bufarray.size/sampsize).round;
-		resampArray = Array.newClear(sampsize+2); //This is the new resampled array
-		ct = 0; //A counter for the resampled array
-		//RESAMPLE THE BUFFER ARRAY AND PUT THE VALUES INTO A NEW ARRAY AS FLOATS
-		bufarray.do{ |it, ix| if( ix%resamp == 0, {resampArray[ct]=it.asFloat; ct = ct+1} ) };
-		//ADD TRACK NUMBER AND OSC ADDRESS
-		resampArray = resampArray.insert(0, trkn.asInteger);
-		resampArray = resampArray.insert(0, "/sbuf");
-		//SEND TO PROCESSING
-		~proc.sendBundle(0.0, resampArray);
-	} );
-};
 
 ////OSCDEFS////
 //On Demand normalized index
@@ -90,43 +44,6 @@ OSCdef( \setidx,{
 	~playsynths[trnum].set(\idxbus, ~ixbuses[trnum+1]);
 }, "/setidx");
 
-//record and play
-OSCdef(\recon, {
-	arg msg;
-	var tr;
-	tr = msg[1].asInteger;
-	~recsynths[tr].set(\gate, 1);
-	"on: ".post; tr.postln;
-}, "/recon");
-
-OSCdef(\recoff, {
-	arg msg;
-	var tr;
-	tr = msg[1].asInteger;
-	~recsynths[tr].set(\gate, 0);
-}, "/recoff");
-
-OSCdef(\play, {
-	arg msg;
-	var tr, ixb;
-	tr = msg[1].asInteger;
-	ixb = msg[2].asInteger;
-	~playsynths[tr].set(\gate, 1);
-}, "/play");
-
-OSCdef(\pause, {
-	arg msg;
-	var tr;
-	tr = msg[1].asInteger;
-	~playsynths[tr].set(\gate, 0);
-}, "/pause");
-
-OSCdef(\wavfrm, {
-	arg msg;
-	var tr = msg[1].asInteger;
-	~waveform.value(~trx[tr], tr);
-}, "/wavfrm");
-
 OSCdef(\stop, {
 	~numtrx.do{|ix| ~recsynths[ix].free; ~playsynths[ix].free; ~ixsynths[ix].free};
 	~trx.do{|it| it.free};
@@ -145,14 +62,24 @@ OSCdef(\restart, {
 
 (
 (~numtrx+1).do{ |ix| ~ixsynths[ix] = Synth(\bufidx, [\buf, ~ixbufs[ix], \bus, ~ixbuses[ix], \kbus, ~ixkbuses[ix]], ~ixgr) };
-~numtrx.do{ |ix|
-	~recsynths[ix] = Synth(\bufrec, [\idxbus, ~ixbuses[0], \buf, ~trx[ix]], ~ingr);
-	~playsynths[ix] = Synth(\bufpl, [\idxbus, ~ixbuses[0], \buf, ~trx[ix]], ~ogr)
-};
 )
 
-(
+
 //notation
+
+
+
+~proc.sendMsg("/dtup", 70109014, 0,0);
+~proc.sendMsg("/dtup", 1708, 0,1);
+
+~proc.sendMsg("/drhset", 0, 1, 1);
+~proc.sendMsg("/drh", 0, 0, 1);
+
+
+
+
+
+//These make the rhythm trees sets
 //ix, nbts, div, startbt(float), end(float), track
 //make 8th notes - 0
 ~proc.sendMsg("/mktup1", 0, 1, 2, 0.0, 16.0);
@@ -164,6 +91,10 @@ OSCdef(\restart, {
 ~proc.sendMsg("/mktup2", 3, 5, 3, 7, 11, 0.0, 16.0);
 
 //make rhythm
+// /mkrhythm: mk(int ix, int tr)
+// This creates a rhythmic set
+// /adrhythm: ad(int ix, float st, float end, int tix)
+// This adds rhythms from the above rhythm trees: start beat & end beat
 ~proc.sendMsg("/mkrhythm", 0, 0); //- 8th
 ~proc.sendMsg("/adrhythm", 0, 0.0, 16.0, 0);
 ~proc.sendMsg("/mkrhythm", 1, 0); //- 7:3
@@ -186,6 +117,10 @@ OSCdef(\restart, {
 ~proc.sendMsg("/adrhythm", 4, 0.0, 16.0, 3);
 ~proc.sendMsg("/adrhythm", 4, 0.0, 16.0, 2);
 
+~proc.sendMsg("/mkrhythm", 14, 1); // 4 - composit
+~proc.sendMsg("/adrhythm", 14, 0.0, 16.0, 3);
+~proc.sendMsg("/adrhythm", 14, 0.0, 16.0, 2);
+
 ~proc.sendMsg("/mkrhythm", 104, 1); // 104 - composit
 ~proc.sendMsg("/adrhythm", 104, 0.0, 16.0, 3);
 ~proc.sendMsg("/adrhythm", 104, 0.0, 16.0, 2);
@@ -201,12 +136,24 @@ OSCdef(\restart, {
 ~proc.sendMsg("/adrhythm", 105, 0.0, 16.0, 2);
 ~proc.sendMsg("/adrhythm", 105, 0.0, 16.0, 1);
 
-
+//makes a set by skipping x number of the set
+//"2,3,5" gets numbers 2,5,10,12,15,20,22...
 ~proc.sendMsg("/alset", 4, "2,0,4,6,0,1");
+~proc.sendMsg("/alset", 14, "1");
 ~proc.sendMsg("/alset", 104, "5,2,2,7,1");
 ~proc.sendMsg("/alset", 5, "6,3,4,8,2,3,1,0,5");
 ~proc.sendMsg("/alset", 105, "3,7,2");
-)
+
+
+~proc.sendMsg("/alset", 0, "2,3,5");
+
+
+
+~proc.sendMsg("/alset", 4, "5,2,2,7,1");
+
+~proc.sendMsg("/drtog", 23, 0);
+~proc.sendMsg("/drtog", 22, 0);
+
 
 
 //8th
@@ -240,6 +187,8 @@ OSCdef(\restart, {
 //combo 1
 ~proc.sendMsg("/drtog", 4, 1);
 ~proc.sendMsg("/drtog", 4, 0);
+~proc.sendMsg("/drtog", 14, 1);
+~proc.sendMsg("/drtog", 14, 0);
 
 ~proc.sendMsg("/drtog", 104, 1);
 ~proc.sendMsg("/drtog", 104, 0);
