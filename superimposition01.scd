@@ -71,7 +71,22 @@ OSCdef(\restart, {
 
 //ix, track, on/off
 ~proc.sendMsg("/drh", 0, 0, 1);
+//ix, num of partials to sustain
 ~proc.sendMsg("/mksus", 0, 8);
+//ix, pitch distribution mode, colon delimited string of args
+////mode 0 - jumping around: rangepct:tessaturamin:tessaturamax
+~proc.sendMsg("/mkpitch", 0, 0, "0.05:0.0:1.0");
+~proc.sendMsg("/rmpitch", 0);
+~proc.sendMsg("/mkpitch", 0, 0, "0.05:0.0:0.33");
+~proc.sendMsg("/mkpitch", 0, 0, "0.05:0.33:0.33");
+//mode 1 - ascending descending; range, tessatura-min, tessatura-max, rate-by-numpart
+~proc.sendMsg("/mkpitch", 0, 1, "0.08:0.0:1.0:-1:7");
+//mode 2 - random w/random range - range, tessatura-min, tessatura-max
+~proc.sendMsg("/mkpitch", 0, 2, "0.25:0.2:0.8");
+// mode 3 - //random w/outliers
+//range, tessatura-min, tessatura-max, outlier-min-numpart, outlier-max-numpart
+~proc.sendMsg("/mkpitch", 0, 3, "0.05:0.45:0.55:3:7");
+
 
 ~proc.sendMsg("/dtup", 70109014, 0,0);
 ~proc.sendMsg("/dtup", 1708, 0,1);

@@ -49,6 +49,7 @@ void setup() {
   osc.plug(setORhythmMkr, "drtog", "/drh");
   osc.plug(setORhythmMkr, "mksus", "/mksus");
   osc.plug(setORhythmMkr, "mkpitch", "/mkpitch");
+  osc.plug(setORhythmMkr, "rmpitch", "/rmpitch");
   
   trw = w-x0;
   btw = trw/totalbts;

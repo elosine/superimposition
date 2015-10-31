@@ -1,5 +1,10 @@
 /*
 
+clusters w/outliers
+
+
+Maybe add in rangemin/max for pitch class
+
 fix sustained notes
 remove pitches
 
