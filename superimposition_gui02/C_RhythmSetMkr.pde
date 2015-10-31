@@ -69,7 +69,6 @@ class RhythmSetMkr {
     }
     rset = sort(rset);
     dset = rset;
-    //println(dset);
   } //End ad
   
   ////

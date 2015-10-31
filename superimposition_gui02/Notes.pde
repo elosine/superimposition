@@ -1,9 +1,43 @@
 /*
+Make Additional lines per rhythm that cover part of the rhythm line for the pitch
+normalize, and then figure a way to plug values into the line and rect functions
+range width, tessatura, use the center of the line and draw the range, constrain to make sure it doesn't go above/below the track
+1-10 for the tessatura
+line at top underneath everything for pitch class
+
+
+Pitch Class Method
+  Swaths of transparent color
+  Catagories - algorithms - Make by staff so each staff will have a characteristic
+    Range width
+    Tessatura
+    Direction
+    Chord Change
+
+Make a all pitch with different densities of chord change
+Make several small range width that jump around with different tessatura
+Going up and down linearly
+
+For this piece:
+2 messiaen modes
+A 12 tone row
+0124? tetrachord
+open pitch
+
+DYNAMICS
+  Hairpins - amount, density
+  General Dynamic & frequency of changes
+  
+ARTICULATIONS
+
+FORM 5MIN(MAIN, DENSE) - 2MIN(SPARCE) - 3MIN(MAIN,DENSE) - 2MIN(LOTS OF ELECTRONICS) - 2MIN(MAIN,DENSE)
+
+
+
 Sustained Notes
 Pauses In The Action
 Articulations
 Pitch/PitchSet/Dynamic Worm
-
 
 
 Make a tup3 function - triple nested tuplets
@@ -55,6 +89,18 @@ Simplify so only a drawing program
 
 
 Make it so it updates first half 3/4 of the way and 2nd half 1/4 of the way
+
+//make sets of tuplets
+//way of arranging which partials to display
+//algorthim of choosing various tuplets and partials
+//arrays of x values
+// random choosing of the array with beat range 
+//find min and max partials, then random for those partials
+//classify, oscify
+
+//make a bunch of tuplets
+//function to grab tuplet, give range and algorithm, and store in array
+//trigger to draw
 
 
 

@@ -33,5 +33,5 @@ void mkrset(){
 }
 
 void mkr(){
-  setORhythmMkr.mk(0, 0, "5,3,9,11,2,7,4, 8, 2,3", 0);
+  setORhythmMkr.mk(0, 0, "5,3,9,11,2,7,4,8,2,3", 0);
 }

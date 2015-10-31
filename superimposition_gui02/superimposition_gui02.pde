@@ -1,15 +1,3 @@
-//make sets of tuplets
-//way of arranging which partials to display
-//algorthim of choosing various tuplets and partials
-//arrays of x values
-// random choosing of the array with beat range 
-//find min and max partials, then random for those partials
-//classify, oscify
-
-//make a bunch of tuplets
-//function to grab tuplet, give range and algorithm, and store in array
-//trigger to draw
-
 import oscP5.*;
 import netP5.*;
 import processing.serial.*;
@@ -59,6 +47,7 @@ void setup() {
   osc.plug(setORhythmSetMkr, "drtog", "/drhset");
   osc.plug(setORhythmMkr, "mk", "/mkrhythm");
   osc.plug(setORhythmMkr, "drtog", "/drh");
+  osc.plug(setORhythmMkr, "mksus", "/mksus");
   
   trw = w-x0;
   btw = trw/totalbts;
@@ -89,6 +78,10 @@ void draw() {
     fill(25, 33, 47);
     rect(x0, (trht*2*i)+trht, w, trht);
   }
+  
+  noStroke();
+  fill(255,127,0);
+  rect(0,0, width, 20);
 
   //beat markers
   strokeWeight(1);
@@ -105,6 +98,11 @@ void draw() {
   setORhythmMkr.drw();
   setORhythmSetMkr.drw();
   setOTup.drw();
+  
+  
+  
+  
+  
   
   //Cursor
   /**/ osc.send("/getidx", new Object[]{}, sc); //get current cursor location from sc

@@ -67,7 +67,11 @@ OSCdef(\restart, {
 
 //notation
 
+~proc = NetAddr("127.0.0.1", 12321); //net sender to processing
 
+//ix, track, on/off
+~proc.sendMsg("/drh", 0, 0, 1);
+~proc.sendMsg("/mksus", 0, 8);
 
 ~proc.sendMsg("/dtup", 70109014, 0,0);
 ~proc.sendMsg("/dtup", 1708, 0,1);
