@@ -1,5 +1,26 @@
 /*
-
+Make dynamics array - set up first & last points and control points, fill rest w/zero
+Increment: 0.04, 7 incs total ppp, pp, p, mp/mf, f, ff, fff
+Initial dynamic 1-7
+  Scenarios
+  
+    Jumps, num jumps, min num of inc, max num of inc, direction or flip
+      Constrain so that jumps aren't made within first or last beat of track
+      If can't make that many incs in one direction go the other direction, (if flip), if can't do that either go to max in that direction
+    
+    Crescendo/Decrescendo
+      number of cres, decres, hairpins; min dynamic, max dynamic, choose within min/max or always go from min to max
+      
+      Stepped crescendo/decresendo
+      
+      sfortsandi
+      
+      
+PITCH CLASSES
+  Num of changes, available pitch classes, initial pitch class
+  Find colors
+  Open, messian 1, tonerow, tetrachord, messiaen 2, cluster
+      
 
 
 
