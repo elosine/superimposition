@@ -91,8 +91,12 @@ fork {
 ~proc.sendMsg("/mkpitch", 0, 3, "0.05:0.45:0.55:3:7");
 
 //make dynamics
-//int ryhthmix, int dynamics mode, int pitch class mode, String "init dynamic, num jumps, min num of inc, max num of inc
+//int ryhthmix, int dynamics mode, int pitch class mode, String args
+//MODE 0 - Random Jumps: String "init dynamic, num jumps, min num of inc, max num of inc"
 ~proc.sendMsg("/mkdyn", 0, 0, 0, "5:7:3:5");
+//MODE 1 - Crescendos: String "init dynamic, num cres, min num of dynamic inc, max num of dynamic inc, min length-beats, max length-beats, max beats between cres"
+~proc.sendMsg("/mkdyn", 0, 1, 0, "1:9:2:5:1.0:2.75:1.0");
+
 
 
 ~proc.sendMsg("/dtup", 70109014, 0,0);

@@ -198,15 +198,17 @@ class RhythmMkr {
   //// MAKE DYNAMICS & PITCH CLASS METHOD ////////////////////////////
   void mkdyn(int dmode, int pmode, String args) { 
     String[]ar = split(args, ':');
-    float initdy = tb-(int(ar[0])*dinc);
+    float initdy = tb-(int(ar[0])*dinc); //initial dynamic y
+
+    //Args applicable to all modes
+    int njs = int(ar[1]);
+    int mninc = int(ar[2]);
+    int mxinc = int(ar[3]);
 
     switch(dmode) {
       //Dynamic Jumps
       //init dynamic, num jumps, min num of inc, max num of inc
     case 0:
-      int njs = int(ar[1]);
-      int mninc = int(ar[2]);
-      int mxinc = int(ar[3]);
       int dirtmp = 1;
       int dinctmp = 1;
       //set up dynamics array
@@ -242,22 +244,23 @@ class RhythmMkr {
       //crescendos
       //init dynamic, max num cres, min num of inc, max num of inc, min length-beats, max length-beats, max beats between cres
     case 1:
-      int njs = int(ar[1]);
-      int mninc = int(ar[2]);
-      int mxinc = int(ar[3]);
-      int mnlen = int(ar[4]);
-      int mxlen = int(ar[5]);
-      int mxbtwn = int(ar[6]);
-      float mxsppx = mxbtwn*btw;
-      float mnlenpxtm = mnlen*btw;
-      float mxlenpxtm = mxlen*btw;
+      float mnlen = float(ar[4]);
+      float mxlen = float(ar[5]);
+      float mxbtwn = float(ar[6]);
+      float mxsppx = mxbtwn*btw; //maximum space between crescendi in pixels
+      float mnlenpxtm = mnlen*btw; //minimum length of crescendo in pixels
+      float mxlenpxtm = mxlen*btw; //maximum length of crescendo in pixels
+      float mnhtpxtm = mninc*dinc; //minimum height of crescendo in pixels
+      float mxhtpxtm = mxinc*dinc; //minimum height of crescendo in pixels
+      
 
       //Temp arrays to hold values because cannot append dyn which is a 2d array
       float[]tmpx = new float[0];
       float[]tmpy = new float[0];
+      //maximum length of temp array for max num of crescendi
+      int maxparttmp = 1+(njs*3)-1; //1 for initial dynamic, 3 vertices for each crescendo, -1 vertex because last crescendo does not drop back down to initial dynamic
 
       float pxtm = 0.0; //pixel counter for while below
-      int itm = 0; //index for dyn array
 
       //find initial x for first crescendo
       //divide track in to numcresc sections
@@ -269,7 +272,7 @@ class RhythmMkr {
       pxtm = initxtmp; //update pxtm
 
       //Calculate height of 1st crescendo
-      float htm = random(mninc, mxinc)+initdy;
+      float htm = initdy-random(mnhtpxtm, mxhtpxtm);
       //Calculate length of 1st crescendo
       float cltmp = random(mnlenpxtm, mxlenpxtm) + pxtm;
       tmpx = append( tmpx, cltmp );
@@ -279,6 +282,7 @@ class RhythmMkr {
       //Draw as many crescendos as you can within parameters, while?
       //choose starting ending & y
       while (pxtm<width) {
+        if ( (tmpx.length-1) >= maxparttmp) break; //if maximum number of crescendi has been reached break loop
         //Calculate space between crescendos
         float sptmp = random(mxsppx) + pxtm;
         if (sptmp>=width)break; //Stop loop if the beginning of the next cres is outside of track
@@ -292,7 +296,7 @@ class RhythmMkr {
         //Calculate length of crescendo
         cltmp = random(mnlenpxtm, mxlenpxtm) + pxtm;
         //Calculate height of crescendo
-        htm = random(mninc, mxinc)+initdy;
+        htm = initdy - random(mnhtpxtm, mxhtpxtm);
         //Stop loop if the end of the next cres is outside of track
         //make last point x=width, y=height of crescendo, IOW - shorten last crescendo ending on end of track
         if (cltmp>=width) {
@@ -305,76 +309,13 @@ class RhythmMkr {
         tmpy = append( tmpy, htm );
         pxtm = cltmp; //update pxtm
       }
-
-
-
-
-      //set up initial dynamic
-      float intdyntmp =  tb - (idy*dinc);
-      //calculate which partials to begin & end crescendo
-      //divide track in to numcresc sections
-      float divtmp = width/njs;
-      //find first partial outside of 1st section
-      for (int i=0; i<dset.length; i++) {
-        if (dset[i]>divtmp) cres1p[0] = floor(random(i)); //grab one of the partials in the first section
-        break;
-      }
-      //loop through number of crescendos
-      for (int i=0; i<njs; i++) {
-        //calculate length of crescendo
-        //calculate which pixel to crescendo to
-        float cresendpx = (round(random(mnlen, mxlen))*btw)+dset[p1tmp]; //which pixel to crescendo to: choose between min/max length in beats of crescendo * width of beat in pixels add current x
-        //find 1st partial past this point
-        int p2tmp; //partial to end first crescendo
-        for (int i=0; i<dset.length; i++) {
-          if (dset[i]>cresendpx) p2tmp = i-1; 
-          break;
-        }
-      }
-
-
-
-
-
-
-      //size of dynamics array
-      dyn = new float[dset.length+1+njs][2]; //+1 for initial dynamic, and 1 extra per cres to make a vertical jump on that partial
-      int[]jumps = new int[njs];
-      int npart = round(dset.length/njs);
-      for (int i=0; i<njs; i++) {
-        jumps[i] = floor( random( i*npart, (i*npart)+npart ) );
-      }
-      //loop through partials, 2nd loop to see if they are the chosen partials
-      for (int i=0; i<dset.length; i++) { 
-        //create a vertex on current partial at current y
-        dyn[ixt][0] = dset[i];
-        dyn[ixt][1] = curry; //keep current y
-        ixt++; //increment dyn index
-        for (int j : jumps) {
-          if ( i==j ) {
-            //get cres inc
-            int jinc = constrain( round(random(mninc, mxinc)), 1, numdi ); //constrain to between 1 and max number of dynamic increments
-            //Which partial to cresendo to
-            float cresendpx = (round(random(mnlen, mxlen))*btw)+dset[i]; //which pixel to crescendo to: choose between min/max length in beats of crescendo * width of beat in pixels add current x
-            float cxtmp = dset[i];
-
-
-            //determine direction to jump based on if above or below the midline
-            if (curry>=dmid) dirt = -1;
-            else dirt = 1;
-            float jy = (dinc*jinc*dirt)+ curry; //calculate new y after jump
-            if (jy>(tb-dinc)) jy=tb-dinc; //if jump goes below lowest dynamic then make it lowest dynamic
-            if (jy<dymx) jy = dymx;//or above highest
-            // println("dinc: " + dinc +" - " + "jinc: " + jinc +" - " + "y: " + jy +" - "+"curry: " + curry);
-            dyn[ixt][0] = dset[i]; //jump to x (same)
-            dyn[ixt][1] = jy; //jump to y
-            ixt++; //advance dyn increment
-            curry = jy; //update current y
-          }
-        }
+      //Create and populate dyn array
+      dyn = new float[tmpx.length][2];
+      for (int i=0; i<tmpx.length; i++) {
+        dyn[i][0] = tmpx[i];
+        dyn[i][1] = tmpy[i];
       }
       break;
-      */
     }
   } //end dynamics & pitch class
 
