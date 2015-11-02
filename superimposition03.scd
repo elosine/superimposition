@@ -92,7 +92,7 @@ fork {
 
 //make dynamics
 //int ryhthmix, int dynamics mode, int pitch class mode, String "init dynamic, num jumps, min num of inc, max num of inc
-~proc.sendMsg("/mkdyn", 0, 0, 0, "1:7:3:5");
+~proc.sendMsg("/mkdyn", 0, 0, 0, "5:7:3:5");
 
 
 ~proc.sendMsg("/dtup", 70109014, 0,0);
