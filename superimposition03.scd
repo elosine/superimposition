@@ -98,6 +98,13 @@ fork {
 ~proc.sendMsg("/mkdyn", 0, 1, 0, "1:7:2:5:1.0:2.75:1.0");
 //MODE 2 - Decrescendos: String "init dynamic, num cres, min num of dynamic inc, max num of dynamic inc, min length-beats, max length-beats, max beats between cres"
 ~proc.sendMsg("/mkdyn", 0, 2, 0, "7:11:6:6:1.0:5.75:0.5");
+//MODE 3 - Hairpins: String "init dynamic, num cres, min num of dynamic inc, max num of dynamic inc, min length-beats, max length-beats, max beats between cres, crescendo:decrescendo ratio in decimal percentage"
+~proc.sendMsg("/mkdyn", 0, 3, 0, "1:11:6:6:1.0:5.75:0.5:0.6");
+
+//make pitch sets
+//int ix, int numchgs, String pitchsets
+~proc.sendMsg("/mkpitchset", 0, 1, "1:2:3:4");
+
 
 
 
