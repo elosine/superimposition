@@ -1,4 +1,12 @@
 /*
+
+Articulations
+  move over svg display code
+  Make like pitch set where you choose between articulations and num of articulations
+  Attach sustained ones to sustained notes
+
+
+
 Decres
 Hairpins
 sf
