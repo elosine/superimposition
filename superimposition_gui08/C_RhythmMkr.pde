@@ -16,6 +16,7 @@ class RhythmMkr {
   int numdi = 7;
   float dymx, dmid, dinc;
   float[][]dyn = new float[0][2];
+  float dynhpct = 0.3333;
 
   // CONSTRUCTORS //
   RhythmMkr(int aix, int atr) {
@@ -24,9 +25,9 @@ class RhythmMkr {
     t0 = tr*trht;
     tb = t0+trht;
 
-    dymx = tb - (trht*0.3333);
-    dmid = tb - ((trht*0.3333)/2.0);
-    dinc = (trht*0.3333)/numdi;
+    dymx = tb - (trht*dynhpct);
+    dmid = tb - ((trht*dynhpct)/2.0);
+    dinc = (trht*dynhpct)/numdi;
   } //end constructor 1
 
   //  DRAW METHOD //
@@ -49,7 +50,11 @@ class RhythmMkr {
         line( dset[i]+x0, t0, dset[i]+x0, tb );
 
         //DRAW PITCH LINES
-        stroke(255, 255, 0);
+        stroke(255, 255, 0); //yellow open
+        stroke(255, 119, 255); //fuchia messiaen mode 3 in F: F, G, A, B, C, C#, D#, E
+        stroke(57, 255, 20); //neon green tone row B=0: D#, A#, C#, D, C, G#, E, F€, F, A, G, B
+        stroke(0, 255, 239); //turquoise messiaen mode 5 in A: A, Bb, D, D#, E, G#
+        stroke(253, 128, 0); //orange tetrachord 0124 on F#: F#, G, G#, Bb
         strokeWeight(3);
         if (pitch.length == dset.length) { //make sure there are pitches in the pitch set
           //vertical lines
@@ -204,6 +209,23 @@ class RhythmMkr {
     int njs = int(ar[1]);
     int mninc = int(ar[2]);
     int mxinc = int(ar[3]);
+    float mnlen;
+    float mxlen;
+    float mxbtwn;
+    float mxsppx; //maximum space between crescendi in pixels
+    float mnlenpxtm; //minimum length of crescendo in pixels
+    float mxlenpxtm; //maximum length of crescendo in pixels
+    float mnhtpxtm; //minimum height of crescendo in pixels
+    float mxhtpxtm; //minimum height of crescendo in pixels
+    float[]tmpx, tmpy;
+    float pxtm;
+    float divtm;
+    int maxparttmp; //1 for initial dynamic, 3 vertices for each crescendo, -1 vertex because last crescendo does not drop back down to initial dynamic
+    float initxtmp;
+    //Calculate height of 1st crescendo
+    float htm ;
+    //Calculate length of 1st crescendo
+    float cltmp;
 
     switch(dmode) {
       //Dynamic Jumps
@@ -244,37 +266,39 @@ class RhythmMkr {
       //crescendos
       //init dynamic, max num cres, min num of inc, max num of inc, min length-beats, max length-beats, max beats between cres
     case 1:
-      float mnlen = float(ar[4]);
-      float mxlen = float(ar[5]);
-      float mxbtwn = float(ar[6]);
-      float mxsppx = mxbtwn*btw; //maximum space between crescendi in pixels
-      float mnlenpxtm = mnlen*btw; //minimum length of crescendo in pixels
-      float mxlenpxtm = mxlen*btw; //maximum length of crescendo in pixels
-      float mnhtpxtm = mninc*dinc; //minimum height of crescendo in pixels
-      float mxhtpxtm = mxinc*dinc; //minimum height of crescendo in pixels
-      
+      mnlen = float(ar[4]);
+      mxlen = float(ar[5]);
+      mxbtwn = float(ar[6]);
+      mxsppx = mxbtwn*btw; //maximum space between crescendi in pixels
+      mnlenpxtm = mnlen*btw; //minimum length of crescendo in pixels
+      mxlenpxtm = mxlen*btw; //maximum length of crescendo in pixels
+      mnhtpxtm = mninc*dinc; //minimum height of crescendo in pixels
+      mxhtpxtm = mxinc*dinc; //minimum height of crescendo in pixels
 
       //Temp arrays to hold values because cannot append dyn which is a 2d array
-      float[]tmpx = new float[0];
-      float[]tmpy = new float[0];
+      tmpx = new float[0];
+      tmpy = new float[0];
       //maximum length of temp array for max num of crescendi
-      int maxparttmp = 1+(njs*3)-1; //1 for initial dynamic, 3 vertices for each crescendo, -1 vertex because last crescendo does not drop back down to initial dynamic
+      maxparttmp = 1+(njs*2); //1 for initial dynamic, 2 vertices for each crescendo
 
-      float pxtm = 0.0; //pixel counter for while below
+      pxtm = 0.0; //pixel counter for while below
+      //initial dynamic @ x=0
+      tmpx = append( tmpx, 0);
+      tmpy = append( tmpy, initdy );
 
       //find initial x for first crescendo
       //divide track in to numcresc sections
-      float divtm = width/njs;
+      divtm = width/njs;
       //randomly select from 1st section
-      float initxtmp = random(divtm);
+      initxtmp = random(divtm);
       tmpx = append( tmpx, initxtmp);
       tmpy = append( tmpy, initdy );
       pxtm = initxtmp; //update pxtm
 
       //Calculate height of 1st crescendo
-      float htm = initdy-random(mnhtpxtm, mxhtpxtm);
+      htm = initdy-random(mnhtpxtm, mxhtpxtm);
       //Calculate length of 1st crescendo
-      float cltmp = random(mnlenpxtm, mxlenpxtm) + pxtm;
+      cltmp = random(mnlenpxtm, mxlenpxtm) + pxtm;
       tmpx = append( tmpx, cltmp );
       pxtm = cltmp; //update pxtm
       tmpy = append( tmpy, htm ); //store 2nd crescendo point
@@ -316,6 +340,84 @@ class RhythmMkr {
         dyn[i][1] = tmpy[i];
       }
       break;
+
+      //Decrescendos
+      //init dynamic, max num cres, min num of inc, max num of inc, min length-beats, max length-beats, max beats between cres
+    case 2:
+      mnlen = float(ar[4]);
+      mxlen = float(ar[5]);
+      mxbtwn = float(ar[6]);
+      mxsppx = mxbtwn*btw; //maximum space between crescendi in pixels
+      mnlenpxtm = mnlen*btw; //minimum length of crescendo in pixels
+      mxlenpxtm = mxlen*btw; //maximum length of crescendo in pixels
+      mnhtpxtm = mninc*dinc; //minimum height of crescendo in pixels
+      mxhtpxtm = mxinc*dinc; //minimum height of crescendo in pixels
+
+      //Temp arrays to hold values because cannot append dyn which is a 2d array
+      tmpx = new float[0];
+      tmpy = new float[0];
+      //maximum length of temp array for max num of crescendi
+      maxparttmp = 1+(njs*2); //1 for initial dynamic, 2 vertices for each crescendo
+
+      pxtm = 0.0; //pixel counter for while below
+      //initial dynamic @ x=0
+      tmpx = append( tmpx, 0);
+      tmpy = append( tmpy, initdy );
+
+      //find initial x for first crescendo
+      //divide track in to numcresc sections
+      divtm = width/njs;
+      //randomly select from 1st section
+      initxtmp = random(divtm);
+      tmpx = append( tmpx, initxtmp);
+      tmpy = append( tmpy, initdy );
+      pxtm = initxtmp; //update pxtm
+
+      //Calculate height of 1st crescendo
+      htm = initdy+random(mnhtpxtm, mxhtpxtm);
+      //Calculate length of 1st crescendo
+      cltmp = random(mnlenpxtm, mxlenpxtm) + pxtm;
+      tmpx = append( tmpx, cltmp );
+      pxtm = cltmp; //update pxtm
+      tmpy = append( tmpy, htm ); //store 2nd crescendo point
+
+      //Draw as many crescendos as you can within parameters, while?
+      //choose starting ending & y
+      while (pxtm<width) {
+        if ( (tmpx.length-1) >= maxparttmp) break; //if maximum number of crescendi has been reached break loop
+        //Calculate space between crescendos
+        float sptmp = random(mxsppx) + pxtm;
+        if (sptmp>=width)break; //Stop loop if the beginning of the next cres is outside of track
+        //point to jump down from to begin next cres
+        tmpx = append( tmpx, sptmp ); 
+        tmpy = append( tmpy, htm );  //last y
+        pxtm = sptmp; //update pxtm
+        //Jump down to 1st point of next cres
+        tmpx = append( tmpx, sptmp ); //same x
+        tmpy = append( tmpy, initdy );  //init y
+        //Calculate length of crescendo
+        cltmp = random(mnlenpxtm, mxlenpxtm) + pxtm;
+        //Calculate height of crescendo
+        htm = initdy + random(mnhtpxtm, mxhtpxtm);
+        //Stop loop if the end of the next cres is outside of track
+        //make last point x=width, y=height of crescendo, IOW - shorten last crescendo ending on end of track
+        if (cltmp>=width) {
+          tmpx = append( tmpx, width ); 
+          tmpy = append( tmpy, htm );
+          break;
+        }
+        //Otherwise make crescendo pt 2
+        tmpx = append( tmpx, cltmp ); 
+        tmpy = append( tmpy, htm );
+        pxtm = cltmp; //update pxtm
+      }
+      //Create and populate dyn array
+      dyn = new float[tmpx.length][2];
+      for (int i=0; i<tmpx.length; i++) {
+        dyn[i][0] = tmpx[i];
+        dyn[i][1] = tmpy[i];
+      }
+      break;
     }
   } //end dynamics & pitch class
 
@@ -325,7 +427,8 @@ class RhythmMkr {
     if (dr==1) {
       //DRAW DYNAMIC CURVES & PITCH SET COLORS
       if (dyn.length > 0) {
-        fill(0, 255, 0, 180); 
+        //fill(0, 255, 0, 180); 
+        fill(120); 
         noStroke(); 
         beginShape(); 
         vertex(0, tb); //control pt

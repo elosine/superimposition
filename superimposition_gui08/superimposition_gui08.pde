@@ -4,8 +4,8 @@ import processing.serial.*;
 
 OscP5 osc;
 NetAddress sc;
-float h = 1000;
-float w = 1600;
+float h = 800;
+float w = 1680;
 float x0 = 0; //starting x of the track (in case you need a left-margin)
 float trht, trhf;  //height of track and vertical half-way point of track
 float cx=0; //x of main cursor
@@ -27,7 +27,7 @@ int csrtog = 0;
 boolean csrg = true;
 
 void setup() {
-  size(1600, 1000);
+  size(1680, 800);
 
   OscProperties properties= new OscProperties();
   //properties.setRemoteAddress("127.0.0.1", 57120); //osc send port (to sc)

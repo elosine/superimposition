@@ -2,7 +2,7 @@
 Decres
 Hairpins
 sf
-Pitch Class
+Pitch Class - incorporate into pitch range colors - orange, green, yellow, turquoise, neon fucha
 Score Generator
 Live Electronics Rig
 Mic Set up, soundcard etc
