@@ -1,4 +1,17 @@
 /*
+Make video of first section, send pitchsets and video instructions, atriculation legend
+
+
+way to display same rhythms and articulations on more than one track - clone class?
+Fix Sustained overflow nullpointer
+Concurrent drawing of svgs? error
+Have a back up master score
+
+
+LIVE ELECTRONICS SCORE
+SAME AS INSTRUMENTALISTS, MORE EFFECTS/SYNTHSIS BECOMES AVAILABLE OR CERTIAN ONES BECOME AVAILABLE
+FOOTPEDALS FOR EFFECTS, 2 BUTTON FOR SYNTHESIS, EFFECTS/SYNTHESIS CHANGE CONTROLLED BY SCORE
+
 MAKE A SUPERIMPOSITION ON:
   medium-sparce 9&2
   medium: rh 7, 8

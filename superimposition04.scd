@@ -73,9 +73,100 @@ fork {
 //notation
 
 //SUPERIMPOSITION DRAFT 1
+( //1
+//INITIAL RHYTHMS WITH OPEN PITCH
 //Med-Sparce Density
-~proc.sendMsg("/drh", 9, 0, 1);
-~proc.sendMsg("/drh", 2, 1, 1);
+~proc.sendMsg("/drh", 2, 0, 1);
+~proc.sendMsg("/drh", 9, 1, 1);
+//Swap on second half
+~proc.sendMsg("/drh", 1009, 2, 1);
+~proc.sendMsg("/drh", 1002, 3, 1);
+)
+
+(//2
+//PITCH CONTOUR WITH OPEN PITCH
+//Compressed range w/outliers & open pitch
+~proc.sendMsg("/mkpitch", 2, 3, "0.05:0.4:0.6:2:4");
+~proc.sendMsg("/mkpitch", 9, 3, "0.05:0.4:0.6:2:4");
+)
+(
+~proc.sendMsg("/mkpitch", 1002, 3, "0.05:0.4:0.6:2:4");
+~proc.sendMsg("/mkpitch", 1009, 3, "0.05:0.4:0.6:2:4");
+)
+
+(//3
+//ADD SUSTAINED NOTES
+~proc.sendMsg("/mksus", 2, 5);
+~proc.sendMsg("/mksus", 9, 3);
+)
+(
+~proc.sendMsg("/mksus", 1009, 4);
+~proc.sendMsg("/mksus", 1002, 2);
+)
+
+(//4
+//CHANGE PITCH CONTOUR
+~proc.sendMsg("/mkpitch", 2, 0, "0.05:0.1:0.9");
+~proc.sendMsg("/mkpitch", 9, 0, "0.05:0.1:0.9");
+)
+(
+~proc.sendMsg("/mkpitch", 1009, 0, "0.05:0.1:0.9");
+~proc.sendMsg("/mkpitch", 1002, 0, "0.05:0.1:0.9");
+)
+
+(//5
+//DYNAMICS
+~proc.sendMsg("/mkdyn", 2, 0,"2:15:1:7");
+~proc.sendMsg("/mkdyn", 9, 0,"2:17:1:7");
+)
+(
+~proc.sendMsg("/mkdyn", 1009, 0,"2:13:1:7");
+~proc.sendMsg("/mkdyn", 1002, 0,"2:18:1:7");
+)
+
+(//6
+//PITCH SETS
+~proc.sendMsg("/mkpitchset", 2, 1, "1:3");
+~proc.sendMsg("/mkpitchset", 9, 1, "1:3");
+)
+(
+~proc.sendMsg("/mkpitchset", 1009, 1, "2:4");
+~proc.sendMsg("/mkpitchset", 1002, 1, "2:4");
+)
+
+(//7
+//ARTICULATIONS
+~proc.sendMsg("/mkart", 2, 4, "trill.svg:accent.svg:tongueslap.svg:flz.svg:multi.svg");
+~proc.sendMsg("/mkart", 9, 4, "trill.svg:Bartok_pizz.svg:accent.svg:harmonics.svg:tongueslap.svg:multi.svg");
+)
+(
+~proc.sendMsg("/mkart", 1009, 6, "trill.svg:accent.svg:tongueslap.svg:flz.svg:multi.svg");
+~proc.sendMsg("/mkart", 1002, 6, "trill.svg:Bartok_pizz.svg:accent.svg:harmonics.svg:tongueslap.svg:multi.svg");
+)
+
+//next section
+med rhythms w/sustained notes
+single pitchset & constricted contour
+ crescendi&few articulations
+
+change pitchset & contour
+change pitchset with more changes
+changes every 2 lengths
+
+//final section of mvt 1
+dense rhythms with all parameters
+//change sustained notes
+change articulations, more and more
+hairpins
+change dynamics
+change pitchsets and contours
+change with every track length
+
+//unisons alternating with sustained notes
+
+harp sustained notes enharmonic tremelo if possible
+
+
 
 
 
@@ -112,15 +203,15 @@ fork {
 ~proc.sendMsg("/mkpitch", 0, 3, "0.05:0.45:0.55:3:7");
 
 //make dynamics
-//int ryhthmix, int dynamics mode, int pitch class mode, String args
+//int ryhthmix, int dynamics mode, String args
 //MODE 0 - Random Jumps: String "init dynamic, num jumps, min num of inc, max num of inc"
-~proc.sendMsg("/mkdyn", 0, 0, 0, "5:7:3:5");
+~proc.sendMsg("/mkdyn", 0, 0, "5:7:3:5");
 //MODE 1 - Crescendos: String "init dynamic, num cres, min num of dynamic inc, max num of dynamic inc, min length-beats, max length-beats, max beats between cres"
-~proc.sendMsg("/mkdyn", 0, 1, 0, "1:7:2:5:1.0:2.75:1.0");
+~proc.sendMsg("/mkdyn", 0, 1, "1:7:2:5:1.0:2.75:1.0");
 //MODE 2 - Decrescendos: String "init dynamic, num cres, min num of dynamic inc, max num of dynamic inc, min length-beats, max length-beats, max beats between cres"
-~proc.sendMsg("/mkdyn", 0, 2, 0, "7:11:6:6:1.0:5.75:0.5");
+~proc.sendMsg("/mkdyn", 0, 2, "7:11:6:6:1.0:5.75:0.5");
 //MODE 3 - Hairpins: String "init dynamic, num cres, min num of dynamic inc, max num of dynamic inc, min length-beats, max length-beats, max beats between cres, crescendo:decrescendo ratio in decimal percentage"
-~proc.sendMsg("/mkdyn", 0, 3, 0, "1:11:6:6:1.0:5.75:0.5:0.6");
+~proc.sendMsg("/mkdyn", 0, 3,"1:11:6:6:1.0:5.75:0.5:0.6");
 
 //make pitch sets
 //int ix, int numchgs, String pitchsets
@@ -129,144 +220,6 @@ fork {
 //make articulations
 //int ix, int numarticulations, String articulations to use
 ~proc.sendMsg("/mkart", 3, 13, "trill.svg:Bartok_pizz.svg:accent.svg:harmonics.svg:tongueslap.svg:flz.svg:multi.svg");
-
-
-
-
-~proc.sendMsg("/dtup", 70109014, 0,0);
-~proc.sendMsg("/dtup", 1708, 0,1);
-
-~proc.sendMsg("/drhset", 0, 1, 1);
-~proc.sendMsg("/drh", 0, 0, 1);
-
-
-
-
-
-//These make the rhythm trees sets
-//ix, nbts, div, startbt(float), end(float), track
-//make 8th notes - 0
-~proc.sendMsg("/mktup1", 0, 1, 2, 0.0, 16.0);
-//make 7:3 notes - 1
-~proc.sendMsg("/mktup1", 1, 3, 7, 0.0, 16.0);
-//make 17:7 notes - 2
-~proc.sendMsg("/mktup1", 2, 7, 17, 0.0, 16.0);
-//make 3:5, 11:7 notes - 3
-~proc.sendMsg("/mktup2", 3, 5, 3, 7, 11, 0.0, 16.0);
-
-//make rhythm
-// /mkrhythm: mk(int ix, int tr)
-// This creates a rhythmic set
-// /adrhythm: ad(int ix, float st, float end, int tix)
-// This adds rhythms from the above rhythm trees: start beat & end beat
-~proc.sendMsg("/mkrhythm", 0, 0); //- 8th
-~proc.sendMsg("/adrhythm", 0, 0.0, 16.0, 0);
-~proc.sendMsg("/mkrhythm", 1, 0); //- 7:3
-~proc.sendMsg("/adrhythm", 1, 0.0, 16.0, 1);
-~proc.sendMsg("/mkrhythm", 2, 0); //- 17:7
-~proc.sendMsg("/adrhythm", 2, 0.0, 16.0, 2);
-~proc.sendMsg("/mkrhythm", 3, 0); //- 3:5, 11:7
-~proc.sendMsg("/adrhythm", 3, 0.0, 16.0, 3);
-~proc.sendMsg("/mkrhythm", 100, 1); //- 8th
-~proc.sendMsg("/adrhythm", 100, 0.0, 16.0, 0);
-~proc.sendMsg("/mkrhythm", 101, 1); //- 7:3
-~proc.sendMsg("/adrhythm", 101, 0.0, 16.0, 1);
-~proc.sendMsg("/mkrhythm", 102, 1); //- 17:7
-~proc.sendMsg("/adrhythm", 102, 0.0, 16.0, 2);
-~proc.sendMsg("/mkrhythm", 103, 1); //- 3:5, 11:7
-~proc.sendMsg("/adrhythm", 103, 0.0, 16.0, 3);
-
-
-~proc.sendMsg("/mkrhythm", 4, 0); // 4 - composit
-~proc.sendMsg("/adrhythm", 4, 0.0, 16.0, 3);
-~proc.sendMsg("/adrhythm", 4, 0.0, 16.0, 2);
-
-~proc.sendMsg("/mkrhythm", 14, 1); // 4 - composit
-~proc.sendMsg("/adrhythm", 14, 0.0, 16.0, 3);
-~proc.sendMsg("/adrhythm", 14, 0.0, 16.0, 2);
-
-~proc.sendMsg("/mkrhythm", 104, 1); // 104 - composit
-~proc.sendMsg("/adrhythm", 104, 0.0, 16.0, 3);
-~proc.sendMsg("/adrhythm", 104, 0.0, 16.0, 2);
-
-
-~proc.sendMsg("/mkrhythm", 5, 0); // 5 - composit
-~proc.sendMsg("/adrhythm", 5, 0.0, 16.0, 3);
-~proc.sendMsg("/adrhythm", 5, 0.0, 16.0, 2);
-~proc.sendMsg("/adrhythm", 5, 0.0, 16.0, 1);
-
-~proc.sendMsg("/mkrhythm", 105, 1); // 105 - composit
-~proc.sendMsg("/adrhythm", 105, 0.0, 16.0, 3);
-~proc.sendMsg("/adrhythm", 105, 0.0, 16.0, 2);
-~proc.sendMsg("/adrhythm", 105, 0.0, 16.0, 1);
-
-//makes a set by skipping x number of the set
-//"2,3,5" gets numbers 2,5,10,12,15,20,22...
-~proc.sendMsg("/alset", 4, "2,0,4,6,0,1");
-~proc.sendMsg("/alset", 14, "1");
-~proc.sendMsg("/alset", 104, "5,2,2,7,1");
-~proc.sendMsg("/alset", 5, "6,3,4,8,2,3,1,0,5");
-~proc.sendMsg("/alset", 105, "3,7,2");
-
-
-~proc.sendMsg("/alset", 0, "2,3,5");
-
-
-
-~proc.sendMsg("/alset", 4, "5,2,2,7,1");
-
-~proc.sendMsg("/drtog", 23, 0);
-~proc.sendMsg("/drtog", 22, 0);
-
-
-
-//8th
-~proc.sendMsg("/drtog", 0, 1);
-~proc.sendMsg("/drtog", 0, 0);
-
-~proc.sendMsg("/drtog", 100, 1);
-~proc.sendMsg("/drtog", 100, 0);
-
-//7:3
-~proc.sendMsg("/drtog", 1, 1);
-~proc.sendMsg("/drtog", 1, 0);
-
-~proc.sendMsg("/drtog", 101, 1);
-~proc.sendMsg("/drtog", 101, 0);
-
-//17:7
-~proc.sendMsg("/drtog", 2, 1);
-~proc.sendMsg("/drtog", 2, 0);
-
-~proc.sendMsg("/drtog", 102, 1);
-~proc.sendMsg("/drtog", 102, 0);
-
-//3:5, 11:7
-~proc.sendMsg("/drtog", 3, 1);
-~proc.sendMsg("/drtog", 3, 0);
-
-~proc.sendMsg("/drtog", 103, 1);
-~proc.sendMsg("/drtog", 103, 0);
-
-//combo 1
-~proc.sendMsg("/drtog", 4, 1);
-~proc.sendMsg("/drtog", 4, 0);
-~proc.sendMsg("/drtog", 14, 1);
-~proc.sendMsg("/drtog", 14, 0);
-
-~proc.sendMsg("/drtog", 104, 1);
-~proc.sendMsg("/drtog", 104, 0);
-
-//combo 2
-~proc.sendMsg("/drtog", 5, 1);
-~proc.sendMsg("/drtog", 5, 0);
-
-~proc.sendMsg("/drtog", 105, 1);
-~proc.sendMsg("/drtog", 105, 0);
-
-
-//fix add rhythm so that no conflict with start and end beats
-//add algorithms and a draw set
 
 
 

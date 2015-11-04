@@ -323,8 +323,8 @@ class RhythmMkr {
     }
   } //end sustained notes function
 
-  //// MAKE DYNAMICS & PITCH CLASS METHOD ////////////////////////////
-  void mkdyn(int dmode, int pmode, String args) { 
+  //// MAKE DYNAMICS ////////////////////////////
+  void mkdyn(int dmode, String args) { 
     String[]ar = split(args, ':');
     float initdy = tb-(int(ar[0])*dinc); //initial dynamic y
 
@@ -736,6 +736,9 @@ class RhythmMkrSet {
         inst.t0 = inst.tr*trht;
         inst.tb = inst.t0+trht;
         inst.dr = on;
+        inst.dymx = inst.tb - (trht*inst.dynhpct);
+        inst.dmid = inst.tb - ((trht*inst.dynhpct)/2.0);
+        inst.dinc = (trht*inst.dynhpct)/inst.numdi;
       }
     }
   } //End drtog method
@@ -759,10 +762,10 @@ class RhythmMkrSet {
   } //End method
 
   // Make Dynamics //
-  void mkdyn(int ix, int dmode, int pmode, String args) {
+  void mkdyn(int ix, int dmode, String args) {
     for (RhythmMkr inst : cset) {
       if (inst.ix == ix) {
-        inst.mkdyn(dmode, pmode, args);
+        inst.mkdyn(dmode, args);
       }
     }
   } //End method
