@@ -73,9 +73,9 @@ fork {
 //notation
 
 //ix, track, on/off
-~proc.sendMsg("/drh", 0, 0, 1);
+~proc.sendMsg("/drh", 0, 1, 1);
 //ix, num of partials to sustain
-~proc.sendMsg("/mksus", 0, 8);
+~proc.sendMsg("/mksus", 0, 7);
 //ix, pitch distribution mode, colon delimited string of args
 ////mode 0 - jumping around: rangepct:tessaturamin:tessaturamax
 ~proc.sendMsg("/mkpitch", 0, 0, "0.05:0.0:1.0");
@@ -104,6 +104,10 @@ fork {
 //make pitch sets
 //int ix, int numchgs, String pitchsets
 ~proc.sendMsg("/mkpitchset", 0, 1, "1:2:3:4");
+
+//make articulations
+//int ix, int numarticulations, String articulations to use
+~proc.sendMsg("/mkart", 0, 13, "trill.svg:Bartok_pizz.svg:accent.svg:harmonics.svg:tongueslap.svg:flz.svg:multi.svg");
 
 
 

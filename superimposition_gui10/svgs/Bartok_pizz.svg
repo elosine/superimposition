@@ -13,8 +13,8 @@
    id="svg9919"
    version="1.1"
    inkscape:version="0.48.2 r9819"
-   width="30.624203"
-   height="39.318764"
+   width="18.656046"
+   height="23.941706"
    sodipodi:docname="Bartok_pizz.svg">
   <metadata
      id="metadata9925">
@@ -48,13 +48,13 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="751"
-     inkscape:window-height="764"
+     inkscape:window-width="1132"
+     inkscape:window-height="804"
      id="namedview9921"
      showgrid="false"
      inkscape:zoom="8.0597364"
-     inkscape:cx="15.204918"
-     inkscape:cy="20.725703"
+     inkscape:cx="15.199918"
+     inkscape:cy="4.7459638"
      inkscape:window-x="434"
      inkscape:window-y="211"
      inkscape:window-maximized="0"
@@ -63,19 +63,23 @@
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0" />
-  <path
-     sodipodi:type="arc"
-     style="fill:none;stroke:#ffffff;stroke-width:3.16436815000000005;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-     id="path3920"
-     sodipodi:cx="101"
-     sodipodi:cy="31.75"
-     sodipodi:rx="12.25"
-     sodipodi:ry="12.25"
-     d="m 113.25,31.75 a 12.25,12.25 0 1 1 -24.5,0 12.25,12.25 0 1 1 24.5,0 z"
-     transform="matrix(1.106066,0,0,1.106066,-96.400565,-11.110933)" />
-  <path
-     style="fill:none;stroke:#ffffff;stroke-width:3.50000000000000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;fill-opacity:1"
-     d="M 15.290586,25.031967 15.378975,0.0180645"
-     id="path3922"
-     inkscape:connector-curvature="0" />
+  <g
+     id="g5908"
+     transform="translate(-0.00499966,0.60268117)">
+    <path
+       transform="matrix(0.67380752,0,0,0.67380752,-58.721537,-7.3823871)"
+       d="M 113.25,31.75 C 113.25,38.515488 107.76549,44 101,44 94.234512,44 88.75,38.515488 88.75,31.75 88.75,24.984512 94.234512,19.5 101,19.5 c 6.76549,0 12.25,5.484512 12.25,12.25 z"
+       sodipodi:ry="12.25"
+       sodipodi:rx="12.25"
+       sodipodi:cy="31.75"
+       sodipodi:cx="101"
+       id="path3920"
+       style="fill:none;stroke:#ffffff;stroke-width:3.16436815;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       sodipodi:type="arc" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path3922"
+       d="M 9.3199154,14.63561 9.3737613,-0.60268117"
+       style="fill:none;stroke:#ffffff;stroke-width:2.13217497;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+  </g>
 </svg>

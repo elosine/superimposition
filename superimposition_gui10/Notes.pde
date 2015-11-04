@@ -1,12 +1,22 @@
 /*
 fix grab next available index of svg set
 make flz svg smaller
-fix getting double articulations for one rhythm
 
 
-fix make sustaining notes
+fix make sustaining notes - maybe just a latency issue?
 Way to add or remove from exsisting articulations
 add a cluster tremelo articulation
+
+
+CREATE 2 OR 3 RHYTHMS - DENSE/UNISON/SPARCE/LOTS SUSTAINED
+CREATE A WAY TO SUPERIMPOSE DIFFERENT THINGS
+  RAW RHYTHMS
+  PITCHES
+  PITCH SETS
+  DYNAMICS
+  ARTICULATIONS
+MAKE VIDEOS, SEND PITCH SETS AND INSTRUCTIONS
+
 
 Create Articulations Function
   Tie to pitches
