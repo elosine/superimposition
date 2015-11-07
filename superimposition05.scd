@@ -250,26 +250,87 @@ fork {
 ~proc.sendMsg("/mksus", 7, 15);
 ~proc.sendMsg("/mksus", 8, 11);
 //Change Articulations
-~proc.sendMsg("/mkart", 3, 4, 4, "tongueslap.svg", "multi.svg");
-
-
+~proc.sendMsg("/mkart", 7, 4, 4, "tongueslap.svg", "multi.svg");
+~proc.sendMsg("/mkart", 8, 4, 2, "tongueslap.svg:Bartok_pizz.svg", "accent.svg");
 )(
 //System 2
+//Pitch Contour(up/down)
 ~proc.sendMsg("/mkpitch", 3, 1, "0.05:0.0:1.0:-1.0:8");
 ~proc.sendMsg("/mkpitch", 0, 1, "0.05:0.0:1.0:-1.0:5");
+//Sustained Notes(more)
+~proc.sendMsg("/mksus", 3, 15);
+~proc.sendMsg("/mksus", 0, 11);
+//Change Articulations
+~proc.sendMsg("/mkart", 3, 4, 4, "tongueslap.svg", "multi.svg");
+~proc.sendMsg("/mkart", 0, 4, 2, "tongueslap.svg:Bartok_pizz.svg", "accent.svg");
 )
 (//11 - Change 3: pitch set(more), pitch distribution(random)
 //System 1
-
+//Pitch Set
+~pss = [1,2,3,4];
+~ps1 = ~pss.choose;
+~ps2 = ~pss.choose;
+~ps3 = ~pss.choose;
+~ps = ~ps1.asString ++":"++~ps2.asString++":"++~ps3.asString;
+~proc.sendMsg("/mkpitchset", 7, 3, ~ps);
+~ps1 = ~pss.choose;
+~ps2 = ~pss.choose;
+~ps3 = ~pss.choose;
+~ps = ~ps1.asString ++":"++~ps2.asString++":"++~ps3.asString;
+~proc.sendMsg("/mkpitchset", 8, 3, ~ps);
+~proc.sendMsg("/mkpitch", 7, 3, "0.05:0.3:0.5:3:7");
+~proc.sendMsg("/mkpitch", 8, 3, "0.05:0.3:0.5:3:7");
 )(
 //System 2
-
+//Pitch Set
+~pss = [1,2,3,4];
+~ps1 = ~pss.choose;
+~ps2 = ~pss.choose;
+~ps3 = ~pss.choose;
+~ps = ~ps1.asString ++":"++~ps2.asString++":"++~ps3.asString;
+~proc.sendMsg("/mkpitchset", 3, 3, ~ps);
+~ps1 = ~pss.choose;
+~ps2 = ~pss.choose;
+~ps3 = ~pss.choose;
+~ps = ~ps1.asString ++":"++~ps2.asString++":"++~ps3.asString;
+~proc.sendMsg("/mkpitchset", 0, 3, ~ps);
+~proc.sendMsg("/mkpitch", 3, 3, "0.05:0.3:0.5:3:7");
+~proc.sendMsg("/mkpitch", 0, 3, "0.05:0.3:0.5:3:7");
 )
 (//12 - Change 4: dynamics(smooth,5), pitch contour, articulations, pitch set
 //System 1
-
+//Dynamics - Smooth
+~proc.sendMsg("/mkdyn", 7, 0, "3:1:0:0");
+~proc.sendMsg("/mkdyn", 8, 0, "3:1:0:0");
+//Pitch Contour
+~proc.sendMsg("/mkpitch", 7, 0, "0.05:0.2:0.8");
+~proc.sendMsg("/mkpitch", 8, 0, "0.05:0.2:0.8");
+//Sustained Notes(more)
+~proc.sendMsg("/mksus", 7, 7);
+~proc.sendMsg("/mksus", 8, 7);
+//Articulations
+~proc.sendMsg("/mkart", 7, 6, 4, "trill.svg:accent.svg:tongueslap.svg:flz.svg:multi.svg", "multi.svg:flz.svg:trill.svg:accent.svg");
+~proc.sendMsg("/mkart", 8, 9, 2, "trill.svg:Bartok_pizz.svg:harmonic.svg:tongueslap.svg:multi.svg", "accent.svg");
+//Pitch Set
+~proc.sendMsg("/mkpitchset", 7, 2, "1:2:3:4");
+~proc.sendMsg("/mkpitchset", 8, 2, "1:2:3:4");
 )(
 //System 2
+//Dynamics - Smooth
+~proc.sendMsg("/mkdyn", 3, 0, "5:1:0:0");
+~proc.sendMsg("/mkdyn", 0, 0, "3:1:0:0");
+//Pitch Contour
+~proc.sendMsg("/mkpitch", 3, 0, "0.05:0.2:0.8");
+~proc.sendMsg("/mkpitch", 0, 0, "0.05:0.2:0.8");
+//Sustained Notes(more)
+~proc.sendMsg("/mksus", 3, 7);
+~proc.sendMsg("/mksus", 0, 7);
+//Articulations
+~proc.sendMsg("/mkart", 3, 6, 4, "trill.svg:accent.svg:tongueslap.svg:flz.svg:multi.svg", "multi.svg:flz.svg:trill.svg:accent.svg");
+~proc.sendMsg("/mkart", 0, 9, 2, "trill.svg:Bartok_pizz.svg:harmonic.svg:tongueslap.svg:multi.svg", "accent.svg");
+//Pitch Set
+~proc.sendMsg("/mkpitchset", 3, 2, "1:2:3:4");
+~proc.sendMsg("/mkpitchset", 0, 2, "1:2:3:4");
 
 )
 
