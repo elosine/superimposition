@@ -166,7 +166,7 @@ class RhythmMkr {
     for (int i=0; i<numsusart; i++) {
       //Only make articulations if there are rhythms available
       if (suses.length>0) {
-        int ixxxtmp = floor( random(ixstmp.length) );
+        int ixxxtmp = floor( random(suses.length) );
         int ixxtmp = suses[ ixxxtmp ]; //choose a partial to place an articulation
         String art = susarts[i%susarts.length]; //choose an articulation from the set
         //add articulation to svg set

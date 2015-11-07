@@ -71,80 +71,240 @@ fork {
 
 
 //notation
+//REPLACE ALL MKARTICULATIONS
 
-//SUPERIMPOSITION DRAFT 1
-( //1
+//SUPERIMPOSITION DRAFT 1 - 13MIN
+//SECTION I - 4:30
+( //1 - 2 systems :30
 //INITIAL RHYTHMS WITH OPEN PITCH
 //Med-Sparce Density
 ~proc.sendMsg("/drh", 2, 0, 1);
 ~proc.sendMsg("/drh", 9, 1, 1);
+)(
 //Swap on second half
 ~proc.sendMsg("/drh", 1009, 2, 1);
 ~proc.sendMsg("/drh", 1002, 3, 1);
 )
 
-(//2
+(//2a - 2 systems :30
 //PITCH CONTOUR WITH OPEN PITCH
 //Compressed range w/outliers & open pitch
 ~proc.sendMsg("/mkpitch", 2, 3, "0.05:0.4:0.6:2:4");
 ~proc.sendMsg("/mkpitch", 9, 3, "0.05:0.4:0.6:2:4");
-)
-(
+)(
+//2b
 ~proc.sendMsg("/mkpitch", 1002, 3, "0.05:0.4:0.6:2:4");
 ~proc.sendMsg("/mkpitch", 1009, 3, "0.05:0.4:0.6:2:4");
 )
 
-(//3
+(//3a - 2 systems :30
 //ADD SUSTAINED NOTES
 ~proc.sendMsg("/mksus", 2, 5);
 ~proc.sendMsg("/mksus", 9, 3);
 )
-(
+(//3b
 ~proc.sendMsg("/mksus", 1009, 4);
 ~proc.sendMsg("/mksus", 1002, 2);
 )
 
-(//4
+(//4a - 2 systems :30
 //CHANGE PITCH CONTOUR
 ~proc.sendMsg("/mkpitch", 2, 0, "0.05:0.1:0.9");
 ~proc.sendMsg("/mkpitch", 9, 0, "0.05:0.1:0.9");
 )
-(
+(//4b
 ~proc.sendMsg("/mkpitch", 1009, 0, "0.05:0.1:0.9");
 ~proc.sendMsg("/mkpitch", 1002, 0, "0.05:0.1:0.9");
 )
 
-(//5
+(//5a - 4 systems 1:00
 //DYNAMICS
 ~proc.sendMsg("/mkdyn", 2, 0,"2:15:1:7");
 ~proc.sendMsg("/mkdyn", 9, 0,"2:17:1:7");
 )
-(
+(//5b
 ~proc.sendMsg("/mkdyn", 1009, 0,"2:13:1:7");
 ~proc.sendMsg("/mkdyn", 1002, 0,"2:18:1:7");
 )
 
-(//6
+(//6a - 2 systems :30
 //PITCH SETS
 ~proc.sendMsg("/mkpitchset", 2, 1, "1:3");
 ~proc.sendMsg("/mkpitchset", 9, 1, "1:3");
 )
-(
+(//6b
 ~proc.sendMsg("/mkpitchset", 1009, 1, "2:4");
 ~proc.sendMsg("/mkpitchset", 1002, 1, "2:4");
 )
 
-(//7
+(//7a - 4 systems 1:00
 //ARTICULATIONS
-~proc.sendMsg("/mkart", 2, 4, "trill.svg:accent.svg:tongueslap.svg:flz.svg:multi.svg");
-~proc.sendMsg("/mkart", 9, 4, "trill.svg:Bartok_pizz.svg:accent.svg:harmonics.svg:tongueslap.svg:multi.svg");
+~proc.sendMsg("/mkart", 2, 3, 2, "trill.svg:accent.svg:tongueslap.svg:flz.svg:multi.svg", "trill.svg");
+~proc.sendMsg("/mkart", 9, 3, 2, "trill.svg:Bartok_pizz.svg:accent.svg:harmonic.svg:tongueslap.svg:multi.svg", "accent.svg");
 )
-(
-~proc.sendMsg("/mkart", 1009, 6, "trill.svg:accent.svg:tongueslap.svg:flz.svg:multi.svg");
-~proc.sendMsg("/mkart", 1002, 6, "trill.svg:Bartok_pizz.svg:accent.svg:harmonics.svg:tongueslap.svg:multi.svg");
+(//7b
+~proc.sendMsg("/mkart", 1009, 4, 2, "trill.svg:accent.svg:tongueslap.svg:flz.svg:multi.svg", "multi.svg");
+~proc.sendMsg("/mkart", 1002, 4, 2, "trill.svg:Bartok_pizz.svg:accent.svg:harmonic.svg:tongueslap.svg:multi.svg", "accent.svg");
 )
 
-//next section
+
+//SECTION II
+//Change 2 things every 4 systems x4 - 5:00
+(//8
+//System 1
+//turn off section 1 turn on section 2 rhythms
+~proc.sendMsg("/drh", 2, 0, 0);
+~proc.sendMsg("/drh", 9, 1, 0);
+~proc.sendMsg("/rmarts", 2);
+~proc.sendMsg("/rmarts", 9);
+//turn on section 2
+~proc.sendMsg("/drh", 7, 0, 1);
+~proc.sendMsg("/drh", 8, 1, 1);
+//make pitches
+~proc.sendMsg("/mkpitch", 7, 2, "0.33:0.1:0.9");
+~proc.sendMsg("/mkpitch", 8, 2, "0.33:0.1:0.9");
+//choose pitch set
+~pss = [1,2,3,4];
+~ps = ~pss.choose;
+~ps = ~ps.asString;
+~proc.sendMsg("/mkpitchset", 7, 1, ~ps);
+~ps = ~pss.choose;
+~ps = ~ps.asString;
+~proc.sendMsg("/mkpitchset", 8, 1, ~ps);
+//Make Crescendos
+~proc.sendMsg("/mkdyn", 7, 1, "1:5:4:6:2.0:5.0:3.0");
+~proc.sendMsg("/mkdyn", 8, 1, "1:5:4:6:1.0:4.0:1.5");
+//Sustained Notes
+~proc.sendMsg("/mksus", 7, 7);
+~proc.sendMsg("/mksus", 8, 7);
+//Articulations
+//int ix, int numarticulations, String articulations to use
+~proc.sendMsg("/mkart", 7, 4, 2, "trill.svg:accent.svg:tongueslap.svg:flz.svg:multi.svg", "multi.svg:flz.svg");
+~proc.sendMsg("/mkart", 8, 4, 2, "trill.svg:Bartok_pizz.svg:harmonic.svg:tongueslap.svg:multi.svg", "accent.svg");
+)(
+//8 - System 2
+~proc.sendMsg("/drh", 1009, 2, 0);
+~proc.sendMsg("/drh", 1002, 3, 0);
+~proc.sendMsg("/rmarts", 1009);
+~proc.sendMsg("/rmarts", 1002);
+~proc.sendMsg("/drh", 3, 2, 1);
+~proc.sendMsg("/drh", 0, 3, 1);
+//make pitches
+~proc.sendMsg("/mkpitch", 3, 2, "0.33:0.1:0.9");
+~proc.sendMsg("/mkpitch", 0, 2, "0.33:0.1:0.9");
+//choose pitch set
+~pss = [1,2,3,4];
+~ps = ~pss.choose;
+~ps = ~ps.asString;
+~proc.sendMsg("/mkpitchset", 3, 1, ~ps);
+~ps = ~pss.choose;
+~ps = ~ps.asString;
+~proc.sendMsg("/mkpitchset", 0, 1, ~ps);
+//Dynamics
+~proc.sendMsg("/mkdyn", 3, 1, "1:7:4:7:1.0:3.0:0.5");
+~proc.sendMsg("/mkdyn", 0, 1, "1:4:4:6:3.0:7.0:2.0");
+//Sustained Notes
+~proc.sendMsg("/mksus", 3, 5);
+~proc.sendMsg("/mksus", 0, 6);
+//Articulations
+~proc.sendMsg("/mkart", 3, 3, 2, "trill.svg:accent.svg:tongueslap.svg:flz.svg:multi.svg", "multi.svg:flz.svg:trill.svg:accent.svg");
+~proc.sendMsg("/mkart", 0, 5, 2, "trill.svg:Bartok_pizz.svg:harmonic.svg:tongueslap.svg:multi.svg", "accent.svg");
+)
+(//9 - Change 1: pitch sets, dynamics
+//System 1
+//Pitch Set
+~pss = [1,2,3,4];
+~ps1 = ~pss.choose;
+~ps2 = ~pss.choose;
+~ps = ~ps1.asString ++":"++~ps2.asString;
+~proc.sendMsg("/mkpitchset", 7, 2, ~ps);
+~ps1 = ~pss.choose;
+~ps2 = ~pss.choose;
+~ps = ~ps1.asString ++":"++~ps2.asString;
+~proc.sendMsg("/mkpitchset", 8, 2, ~ps);
+//Dynamics - Hairpins
+~proc.sendMsg("/mkdyn", 7, 3,"4:4:6:6:2.0:3.75:4.0:0.7");
+~proc.sendMsg("/mkdyn", 8, 3,"3:4:6:6:2.0:3.75:4.0:0.7");
+)(
+//System 2
+//Pitch Set
+~pss = [1,2,3,4];
+~ps1 = ~pss.choose;
+~ps2 = ~pss.choose;
+~ps = ~ps1.asString ++":"++~ps2.asString;
+~proc.sendMsg("/mkpitchset", 3, 2, ~ps);
+~ps1 = ~pss.choose;
+~ps2 = ~pss.choose;
+~ps = ~ps1.asString ++":"++~ps2.asString;
+~proc.sendMsg("/mkpitchset", 0, 2, ~ps);
+//Dynamics - Abrupt Changes
+~proc.sendMsg("/mkdyn", 3, 0, "5:11:3:7");
+~proc.sendMsg("/mkdyn", 0, 0, "3:13:3:7");
+)
+(//10 - Change 2: pitch distribution(up/down), sustained notes, articulations
+//System 1
+//Pitch Contour(up/down)
+~proc.sendMsg("/mkpitch", 7, 1, "0.05:0.0:1.0:-1.0:8");
+~proc.sendMsg("/mkpitch", 8, 1, "0.05:0.0:1.0:-1.0:5");
+//Sustained Notes(more)
+~proc.sendMsg("/mksus", 7, 15);
+~proc.sendMsg("/mksus", 8, 11);
+//Change Articulations
+~proc.sendMsg("/mkart", 3, 4, 4, "tongueslap.svg", "multi.svg");
+
+
+)(
+//System 2
+~proc.sendMsg("/mkpitch", 3, 1, "0.05:0.0:1.0:-1.0:8");
+~proc.sendMsg("/mkpitch", 0, 1, "0.05:0.0:1.0:-1.0:5");
+)
+(//11 - Change 3: pitch set(more), pitch distribution(random)
+//System 1
+
+)(
+//System 2
+
+)
+(//12 - Change 4: dynamics(smooth,5), pitch contour, articulations, pitch set
+//System 1
+
+)(
+//System 2
+
+)
+
+//SECTION III - UNISONS AND SUSTAINED NOTES, 3 PATES 1:30
+
+//SECTION IV - DENSE RHYTHMS, CHANGES EVERY SYSTEM, 4 PAGES 2:00
+
+//SORT OUT ARTICULATIONS
+
+(
+~proc.sendMsg("/drh", 7, 0, 1);
+~proc.sendMsg("/mkpitch", 7, 2, "0.33:0.1:0.9");
+~proc.sendMsg("/mksus", 7, 11);
+~proc.sendMsg("/mkart", 7, 100, 100, "trill.svg:accent.svg:tongueslap.svg:flz.svg", "multi.svg");
+
+)
+//~proc.sendMsg("/mkart", 7, 4, "trill.svg:accent.svg:tongueslap.svg:flz.svg:multi.svg");
+)
+
+"trill.svg:Bartok_pizz.svg:accent.svg:harmonics.svg:tongueslap.svg:flz.svg:multi.svg:accentsus.svg:trillsus.svg:flzsus.svg:multisus.svg"
+
+//pitch contour
+//sustained notes
+//articulations
+
+//pitch set
+//jump around dynamics
+//hairpins
+
+//smooth dynamics
+//pitch contour
+//articulations
+//pitch set
+
+
 med rhythms w/sustained notes
 single pitchset & constricted contour
  crescendi&few articulations
@@ -153,7 +313,12 @@ change pitchset & contour
 change pitchset with more changes
 changes every 2 lengths
 
-//final section of mvt 1
+//unisons alternating with sustained notes
+
+harp sustained notes enharmonic tremelo if possible
+
+//final section
+//changes every system
 dense rhythms with all parameters
 //change sustained notes
 change articulations, more and more
@@ -161,10 +326,6 @@ hairpins
 change dynamics
 change pitchsets and contours
 change with every track length
-
-//unisons alternating with sustained notes
-
-harp sustained notes enharmonic tremelo if possible
 
 
 
