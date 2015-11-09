@@ -90,6 +90,8 @@ void mkr() {
   setORhythmMkr.mk(7, 0, "2,3,15,3,2,1,4,13,1,4,1,17", 0); //31 partials med
   setORhythmMkr.mk(8, 0, "5,4,15,3,5,24,4,1,19,2", 4); //29 partials med
   setORhythmMkr.mk(9, 0, "8,2,15,2,4,17,3,1", 2); // partials sparceish
+  setORhythmMkr.mk(10, 0, "2,1,4,27,2,3,29,2,5,3,2,4,17,1,2,24", 3); //sparce
+  setORhythmMkr.mk(11, 0, "5,4,35,3,5,4,7,62,70,3,100", 4); //29 partials med
   
   /////DUPLICATES
   setORhythmMkr.mk(1000, 0, "5,3,9,11,2,7,4,8,2,3", 0); //33 partials

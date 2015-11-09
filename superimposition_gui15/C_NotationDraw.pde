@@ -177,6 +177,7 @@ class NotationDrawSet {
     for (int i=cset.size ()-1; i>=0; i--) {
       NotationDraw inst = cset.get(i); 
       if (inst.ix == ix) {
+        inst.rmarts();
         cset.remove(i);
         break;
       }

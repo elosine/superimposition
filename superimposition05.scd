@@ -72,7 +72,7 @@ fork {
 
 //notation
 //REPLACE ALL MKARTICULATIONS
-
+~proc.sendMsg("/mknotedrw", 0, 2, 3);
 //SUPERIMPOSITION DRAFT 1 - 13MIN
 //SECTION I - 4:30
 ( //1 - 2 systems :30
@@ -334,9 +334,14 @@ fork {
 
 )
 
-//SECTION III - UNISONS AND SUSTAINED NOTES, 3 PATES 1:30
+//SECTION III - UNISONS AND SUSTAINED NOTES, 3 PAGES 1:30
+//sparce rhythm, several sustains, a few articulations, smooth dynamics, pitch range w/outliers, single pitch class - 4 rhythm sets, repeat 2 everything else same - 9, 2, generate 2 more
+
+~proc.sendMsg("/drh", 10, 0, 1);
+~proc.sendMsg("/drh", 11, 0, 1);
 
 //SECTION IV - DENSE RHYTHMS, CHANGES EVERY SYSTEM, 4 PAGES 2:00
+//make 8, 1 system formations, go through the different possibilities;
 
 //SORT OUT ARTICULATIONS
 
