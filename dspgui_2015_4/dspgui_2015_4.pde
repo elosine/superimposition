@@ -12,8 +12,8 @@ String serialmsg;
 boolean serialon = false;
 
 
-int nfx = 5;
-String[] fxlbl = {"Amplify", "RingMod1", "RingMod2", "Freeze", "Samps"};
+int nfx = 4;
+String[] fxlbl = {"Amplify", "RingMod1", "RingMod2", "Freeze"};
 String[] clrset = {"springgreen", "violetred", "dodgerblue", 
   "sunshine", "magenta", "indigo", "peacock", "papaya", "turquoiseblue", "pink", "fig", "yellow", 
   "mint"};
@@ -34,7 +34,7 @@ String[] sampn;
 int fxtogL = nfx;
 int fxtogR = nfx;
 int w = 390;
-int h = 600;
+int h = 630;
 
 int numsamps = 4;
 int numsampfx = 4;
@@ -176,8 +176,6 @@ void draw() {
     if (mofx[i]==1 || fxatv[i]==1) {
       //Active Button Highlight
       stroke(clr.get("orange"));
-      //Activate Samps Once Selected
-      if ( fxlbl[i].equals("Samps") ) fxon[i] = 1; //Check to see if "Samps" button is selected and make active
     }//
     else noStroke();
     rect(marg, marg+((bh+gap2)*i), bw, bh);
@@ -187,16 +185,14 @@ void draw() {
     text( fxlbl[i], (bw/2)+marg, (bh/2)+((bh+gap2)*i)+marg );
 
     //Samples Sub-Menu
-    if ( fxlbl[i].equals("Samps") && fxon[i] == 1 ) { //Check to see if "Samps" button is selected
-      for (int j=0; j<numsamps; j++) {
+    for (int j=0; j<numsamps; j++) {
+      noStroke();
+      fill(255);
+      rect(marg, marg+( ((bh+gap2)*nfx) + gap3 + ( (bh+gap2+gap4+bh2)*j )  ), bw, bh);
+      for (int k=0; k<numsampfx; k++) {
         noStroke();
-        fill(255);
-        rect(marg, marg+( ((bh+gap2)*nfx) + gap3 + ( (bh+gap2+gap4+bh2)*j )  ), bw, bh);
-        for (int k=0; k<numsampfx; k++) {
-          noStroke();
-          fill( clr.get( clrset[(k+8)%clrset.length] ) );
-          rect(marg + ( (bw2+gap4)*k ), marg+( ((bh+gap2)*nfx) + gap3 + ( (bh+gap2+gap4+bh2)*j ) + bh + gap4 ), bw2, bh2);
-        }
+        fill( clr.get( clrset[(k+8)%clrset.length] ) );
+        rect(marg + ( (bw2+gap4)*k ), marg+( ((bh+gap2)*nfx) + gap3 + ( (bh+gap2+gap4+bh2)*j ) + bh + gap4 ), bw2, bh2);
       }
     }
   }
@@ -215,6 +211,18 @@ void draw() {
     fill(0);
     textFont(f1);
     text( fxlbl[i], (bw/2)+marg+gap1+bw, (bh/2)+((bh+gap2)*i)+marg );
+
+    //Samples Sub-Menu
+    for (int j=0; j<numsamps; j++) {
+      noStroke();
+      fill(255);
+      rect(marg+gap1+bw, marg+( ((bh+gap2)*nfx) + gap3 + ( (bh+gap2+gap4+bh2)*j )  ), bw, bh);
+      for (int k=0; k<numsampfx; k++) {
+        noStroke();
+        fill( clr.get( clrset[(k+8)%clrset.length] ) );
+        rect(marg+gap1+bw + ( (bw2+gap4)*k ), marg+( ((bh+gap2)*nfx) + gap3 + ( (bh+gap2+gap4+bh2)*j ) + bh + gap4 ), bw2, bh2);
+      }
+    }
   }
 
   //Sample Player
