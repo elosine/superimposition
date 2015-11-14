@@ -21,14 +21,14 @@ int marg = 20;
 int gap1 = 50;
 int gap2 = 10;
 int gap3 = 15;
-int gap4 = 5;
+int gap4 = 10;
 int bw = 200;
 int bw2 = 20;
 int bh = 50;
 int bh2 = 20;
 PFont f1, f2;
 int[]fxon, mofx, mos, smpf, fxatv;
-int[]fxonR, mofxR, fxatvR;
+int[]fxonR, mofxR, fxatvR, smofxL, sfxatvL, smofxR, sfxatvR, samprecR, samprecL;
 float[]sdurs;
 String[] sampn;
 int fxtogL = nfx;
@@ -38,6 +38,8 @@ int h = 630;
 
 int numsamps = 4;
 int numsampfx = 4;
+int[][]sampfxL;
+int[][]sampfxR;
 
 void setup() {
   size(600, 800);
@@ -57,12 +59,33 @@ void setup() {
   for (int i=0; i<nfx; i++) mofx[i]=0;
   fxatv = new int[nfx];
   for (int i=0; i<nfx; i++) fxatv[i]=0;
+  smofxL = new int[nfx];
+  for (int i=0; i<nfx; i++) smofxL[i]=0;
+  sfxatvL = new int[nfx];
+  for (int i=0; i<nfx; i++) sfxatvL[i]=0;
   fxonR = new int[nfx];
   for (int i=0; i<nfx; i++) fxonR[i]=0;
   mofxR = new int[nfx];
   for (int i=0; i<nfx; i++) mofxR[i]=0;
   fxatvR = new int[nfx];
   for (int i=0; i<nfx; i++) fxatvR[i]=0;
+  smofxR = new int[nfx];
+  for (int i=0; i<nfx; i++) smofxR[i]=0;
+  sfxatvR = new int[nfx];
+  for (int i=0; i<nfx; i++) sfxatvR[i]=0;
+  samprecL = new int[nfx];
+  for (int i=0; i<nfx; i++) samprecL[i]=0;
+  samprecR = new int[nfx];
+  for (int i=0; i<nfx; i++) samprecR[i]=0;
+  sampfxL = new int[numsamps][numsampfx];
+  sampfxR = new int[numsamps][numsampfx];
+  for (int i=0; i<numsamps; i++) {
+    for (int j=0; j<numsampfx; j++) {
+      sampfxL[i][j] = 0;
+      sampfxR[i][j] = 0;
+    }
+  }
+
   mos = new int[0];
   smpf = new int[0];
   sdurs = new float[0];
@@ -186,11 +209,23 @@ void draw() {
 
     //Samples Sub-Menu
     for (int j=0; j<numsamps; j++) {
-      noStroke();
+      //Record Indicator stroke
+      strokeWeight(3);
+      if (smofxL[j]==1 || sfxatvL[j]==1) {
+        stroke(clr.get("red"));
+      }//
+      else noStroke();
+      //sample box
       fill(255);
       rect(marg, marg+( ((bh+gap2)*nfx) + gap3 + ( (bh+gap2+gap4+bh2)*j )  ), bw, bh);
+      //recording indicator
+      if (samprecL[j]==1) { 
+        fill(255, 0, 0, 120);
+        rect(marg, marg+( ((bh+gap2)*nfx) + gap3 + ( (bh+gap2+gap4+bh2)*j )  ), bw, bh);
+      }
       for (int k=0; k<numsampfx; k++) {
-        noStroke();
+        if (sampfxL[j][k]==1) stroke(255, 0, 0);
+        else noStroke();
         fill( clr.get( clrset[(k+8)%clrset.length] ) );
         rect(marg + ( (bw2+gap4)*k ), marg+( ((bh+gap2)*nfx) + gap3 + ( (bh+gap2+gap4+bh2)*j ) + bh + gap4 ), bw2, bh2);
       }
@@ -214,11 +249,22 @@ void draw() {
 
     //Samples Sub-Menu
     for (int j=0; j<numsamps; j++) {
-      noStroke();
+      //Record Indicator stroke
+      strokeWeight(3);
+      if (smofxR[j]==1 || sfxatvR[i]==1) {
+        stroke(clr.get("red"));
+      }//
+      else noStroke();
       fill(255);
       rect(marg+gap1+bw, marg+( ((bh+gap2)*nfx) + gap3 + ( (bh+gap2+gap4+bh2)*j )  ), bw, bh);
+      //recording indicator
+      if (samprecR[j]==1) { 
+        fill(255, 0, 0, 120);
+        rect(marg+gap1+bw, marg+( ((bh+gap2)*nfx) + gap3 + ( (bh+gap2+gap4+bh2)*j )  ), bw, bh);
+      }
       for (int k=0; k<numsampfx; k++) {
-        noStroke();
+        if(sampfxR[j][k] == 1) stroke(255,0,0);
+        else noStroke();
         fill( clr.get( clrset[(k+8)%clrset.length] ) );
         rect(marg+gap1+bw + ( (bw2+gap4)*k ), marg+( ((bh+gap2)*nfx) + gap3 + ( (bh+gap2+gap4+bh2)*j ) + bh + gap4 ), bw2, bh2);
       }
@@ -275,31 +321,39 @@ void mousePressed() {
   if (wxr>=0) {
     switch(wxr) {
     case 0:
-      fxon[wxr] = (fxon[wxr]+1)%2;
-      if (fxon[wxr]==1)osc.send("/liveampon", new Object[]{1}, sc);
+      fxonR[wxr] = (fxonR[wxr]+1)%2;
+      if (fxonR[wxr]==1)osc.send("/liveampon", new Object[]{1}, sc);
       else osc.send("/liveampoff", new Object[]{1}, sc);
       break;
     case 1:
-      fxon[wxr] = (fxon[wxr]+1)%2;
-      if (fxon[wxr]==1)osc.send("/liverm1on", new Object[]{1}, sc);
+      fxonR[wxr] = (fxonR[wxr]+1)%2;
+      if (fxonR[wxr]==1)osc.send("/liverm1on", new Object[]{1}, sc);
       else osc.send("/liverm1off", new Object[]{1}, sc);
       break;
     case 2:
-      fxon[wxr] = (fxon[wxr]+1)%2;
-      if (fxon[wxr]==1)osc.send("/liverm2on", new Object[]{1}, sc);
+      fxonR[wxr] = (fxonR[wxr]+1)%2;
+      if (fxonR[wxr]==1)osc.send("/liverm2on", new Object[]{1}, sc);
       else osc.send("/liverm2off", new Object[]{}, sc);
       break;
     case 3:
-      fxon[wxr] = millis()+16000;
+      fxonR[wxr] = millis()+16000;
       osc.send("/livefreezeon", new Object[]{1}, sc);
       break;
     }
   }
 
-  //Samples
+  //Samples L
   if (wsmp()>=0) {
-    osc.send("/playsamp", new Object[]{wsmp()}, sc);
-    smpf[wsmp()] = ceil(millis()+(sdurs[wsmp()]*1000));
+    //osc.send("/playsamp", new Object[]{wsmp()}, sc);
+    //smpf[wsmp()] = ceil(millis()+(sdurs[wsmp()]*1000));
+    samprecL[wsmp()] =  (samprecL[wsmp()]+1)%2;
+  }
+
+  //Samples R
+  if (wsmpR()>=0) {
+    //osc.send("/playsamp", new Object[]{wsmp()}, sc);
+    //smpf[wsmp()] = ceil(millis()+(sdurs[wsmp()]*1000));
+    samprecR[wsmpR()] =  (samprecR[wsmpR()]+1)%2;
   }
 }
 
@@ -318,6 +372,32 @@ void mouseMoved() {
   //
   else for (int i=0; i<nfx; i++) mofx[i]=0;
 
+  //which sample moused over
+  if (wsmp()>=0) {
+    for (int i=0; i<numsamps; i++) {
+      if (wsmp()==i) {
+        smofxL[i]=1;
+      } else smofxL[i]=0;
+    }
+  }
+  //
+  else for (int i=0; i<numsamps; i++) smofxL[i]=0;
+
+  //which sample fx moused over
+  if (wsampfxL()[1]>=0) {
+    for (int i=0; i<numsamps; i++) {
+      if (wsampfxL()[0]==i) {
+        for (int j=0; j<numsampfx; j++) {
+          if (wsampfxL()[1]==j) {
+            sampfxL[i][j] = 1;
+          }
+        }
+      }
+    }
+  } //
+  else for (int i=0; i<numsamps; i++) for (int j=0; j<numsampfx; j++) sampfxL[i][j] = 0;
+
+
   //Right
   if (wfxR()>=0) {
     for (int i=0; i<nfx; i++) {
@@ -329,14 +409,30 @@ void mouseMoved() {
   else for (int i=0; i<nfx; i++) mofxR[i]=0;
 
   //which sample moused over
-  if (wsmp()>=0) {
-    for (int i=0; i<sampn.length; i++) {
-      if (wsmp()==i)mos[i]=1;
-      else mos[i]=0;
+  if (wsmpR()>=0) {
+    for (int i=0; i<numsamps; i++) {
+      if (wsmpR()==i) {
+        smofxR[i]=1;
+      } //
+      else smofxR[i]=0;
     }
   }
   //
-  else for (int i=0; i<sampn.length; i++) mos[i]=0;
+  else for (int i=0; i<numsamps; i++) smofxR[i]=0;
+
+  //which sample fx moused over
+  if (wsampfxR()[1]>=0) {
+    for (int i=0; i<numsamps; i++) {
+      if (wsampfxR()[0]==i) {
+        for (int j=0; j<numsampfx; j++) {
+          if (wsampfxR()[1]==j) {
+            sampfxR[i][j] = 1;
+          }
+        }
+      }
+    }
+  } //
+  else for (int i=0; i<numsamps; i++) for (int j=0; j<numsampfx; j++) sampfxR[i][j] = 0;
 }
 
 int wfx() {
@@ -362,14 +458,64 @@ int wfxR() {
 
 int wsmp() {
   int n = -1;
-  for (int i=0; i<sampn.length; i++) {
-    if ( mouseX>(marg+bw+40) && mouseX<(marg+bw+40+bw2) && 
-      mouseY>marg+((bh2+3)*i) && mouseY<(marg+((bh2+3)*i)+bh2) ) {
+  for (int i=0; i<numsamps; i++) {
+    if ( mouseX>(marg) && mouseX<(marg+bw) && 
+      mouseY>( marg + ( (bh+gap2)*nfx  ) + gap3 + ( (bh+gap2+gap4+bh2)*i )  ) && 
+      mouseY < ( marg + ( (bh+gap2)*nfx  ) + gap3 + ( (bh+gap2+gap4+bh2)*i ) + (bh+gap2+gap4+bh2) ) ) {
       n=i;
     }
   }
   return n;
 }
+
+int wsmpR() {
+  int n = -1;
+  for (int i=0; i<numsamps; i++) {
+    if ( mouseX>(marg+bw+gap2) && mouseX<(marg+bw+gap2+bw) && 
+      mouseY>( marg + ( (bh+gap2)*nfx  ) + gap3 + ( (bh+gap2+gap4+bh2)*i )  ) && 
+      mouseY < ( marg + ( (bh+gap2)*nfx  ) + gap3 + ( (bh+gap2+gap4+bh2)*i ) + (bh+gap2+gap4+bh2) ) ) {
+      n=i;
+    }
+  }
+  return n;
+}
+
+int[] wsampfxR() {
+  int[] n = new int[2];
+  n[1] = -1;
+  for (int i=0; i<numsamps; i++) {
+    if ( mouseY > ( marg + ( (bh+gap2)*nfx  ) + gap3 + bh + gap4 + ( (bh2+gap4+bh+gap4)*i )  ) &&
+      mouseY <  ( marg + ( (bh+gap2)*nfx  ) + gap3 + bh + gap4 + ( (bh2+gap4+bh+gap4)*i ) +bh2)  ) {
+      for (int j=0; j<numsampfx; j++) {
+        if (  mouseX > (marg + bw + gap1+((bh2+gap4)*j ) ) && mouseX < (marg + bw + gap1+((bh2+gap4)*j ) + bh2 )  ) {
+          n[0] = i;
+          n[1] = j;
+        }
+      }
+    }
+  }
+  return n;
+}
+
+
+
+int[] wsampfxL() {
+  int[] n = new int[2];
+  n[1] = -1;
+  for (int i=0; i<numsamps; i++) {
+    if ( mouseY > ( marg + ( (bh+gap2)*nfx  ) + gap3 + bh + gap4 + ( (bh2+gap4+bh+gap4)*i )  ) &&
+      mouseY <  ( marg + ( (bh+gap2)*nfx  ) + gap3 + bh + gap4 + ( (bh2+gap4+bh+gap4)*i ) +bh2)  ) {
+      for (int j=0; j<numsampfx; j++) {
+        if (  mouseX > (marg +((bh2+gap4)*j ) ) && mouseX < (marg + ((bh2+gap4)*j ) + bh2 )  ) {
+          n[0] = i;
+          n[1] = j;
+        }
+      }
+    }
+  }
+  return n;
+}
+
 
 void keyPressed() {
   if (key=='1') osc.send("/sfnames", new Object[]{}, sc);
