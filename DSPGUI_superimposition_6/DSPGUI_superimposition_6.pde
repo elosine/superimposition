@@ -36,6 +36,9 @@ Serial[] myserials; // Create a list of Serial objects from the Serial class
 ////// Serial Data
 int[][] serialgates; // A 2D array to store gates for serial events per serial device, per header
 String[][] serialdatas; // A 2D array to store serial data per serial device, per header
+//// Other ///////////////////////////////////////////////////////////////////////////////////////
+int fxtogL = nfx-1; //a toggle for the left bank of fx
+int fxtogR = nfx-1; //a toggle for the right bank of fx
 ////////////////////////////////////////////////////////////////////////////////////////////
 // SETUP /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -61,8 +64,17 @@ void setup() {
   for (int i=0; i<myserialnums.length; i++) {
     String portnametemp = Serial.list()[ myserialnums[i] ]; //get name of port
     myserials[i] = new Serial(this, portnametemp, 9600); //populate myserials and open the ports
+    myserials[i].bufferUntil(10); //this will buffer the serial message until it gets a hard return (ASCII code 10) and then forward to serialEvent
   }  // End for myserialnums
   // Initialize serialgates and serialdatas with 0s & empty strings respectively
+  serialgates = new int[myserialnums.length][0];
+  serialdatas = new String[myserialnums.length][0];
+  for (int i=0; i<myserialnums.length; i++) {
+    for (int j=0; j<serialheaders[i].length; j++) {
+      serialgates[i] = append(serialgates[i], 0);
+      serialdatas[i] = append(serialdatas[i], "");
+    }
+  }
   for (int i=0; i<myserialnums.length; i++) {
     for (int j=0; j<serialheaders[i].length; j++) {
       serialgates[i][j] = 0;
@@ -91,14 +103,64 @@ void setup() {
 void draw() {
   background(0);
   pressz.drw(); //draw button
-  // Use an if statement on a serialgate in draw to invoke actions
-  //// Device-1, Header-"bt0"
-  if (serialgates[0][0] == 1) {
-    // Run a function or action here
-    // For example: someint = int(serialdatas[0][2]);
-    // Or: movesomething();
+  // SERIAL DEVICE ACTIONS ///////////////////////////////////////////////////////////////////////////////////////////////////////
+  //// Device-0, Header-"bt0" - Toggle Left Fx /////////////////////////////////////////////////////////////////////////////////////////////////////
+  if (serialgates[0][0] == 1) { //if serialgates[0][0] == 1, means that the serialEvent has opened a gate for device:0, header:0
+    int valtmp = int(serialdatas[0][0]);
+    fxtogL = (fxtogL + valtmp)%nfx; // increment fxtogL //put this line here for on press
+    for (Press inst : pressz.cset) { //cycle through all of the buttons
+      if (inst.ix<100) { //because the right fx bank starts @100
+        if (inst.ix==fxtogL) { // if the index of the button equals the current fxtogL
+          inst.focus = 1; //bring that button to focus
+        }// end if inst
+        else inst.focus = 0; //otherwise turn focus off all other buttons
+      } //end if inst.ix<100
+    } //end for Press
+    // fxtogL = (fxtogL + int(serialdatas[0][0]))%nfx; // increment fxtogL //put this line here for on release
     serialgates[0][0] = 0; // Reset gate to 0 to wait for next message
-  }
+  } //end Device-0, Header-"bt0"
+  //// Device-0, Header-"bt1" - Toggle Rfx ///////////////////////////////////////////////////////////////////////////////////////////////////
+  if (serialgates[0][1] == 1) { //if serialgates[0][0] == 1, means that the serialEvent has opened a gate for device:0, header:1
+    int valtmp = int(serialdatas[0][1]);
+    fxtogR = (fxtogR + valtmp)%nfx; // increment fxtogL
+    for (Press inst : pressz.cset) { //cycle through all of the buttons
+      if (inst.ix>=100) { //because the right fx bank starts @100
+        if (inst.ix==(fxtogR+100)) { // if the index of the button equals the current fxtogR, right button indexes start at 100
+          inst.focus = 1; //bring that button to focus
+        }// end if inst
+        else inst.focus = 0; //otherwise turn focus off all other buttons
+      } //ind if inst.ix>=100
+    } //end for Press
+    serialgates[0][1] = 0; // Reset gate to 0 to wait for next message
+  } //end Device-0, Header-"bt1"
+  //// Device-0, Header-"bt2" - Turn on effect left ///////////////////////////////////////////////////////////////////////////////////////////////////
+  if (serialgates[0][2] == 1) { //if serialgates[0][0] == 1, means that the serialEvent has opened a gate for device:0, header:1
+    int valtmp = int(serialdatas[0][2]);
+    for (Press inst : pressz.cset) { //cycle through all of the buttons
+      if (inst.ix<100) { //because the right fx bank starts @100
+        if (inst.ix==fxtogL) { // if the index of the button equals the current fxtogR, right button indexes start at 100
+          inst.on = valtmp; //bring that button to focus
+          osc.send("/" + inst.label, new Object[]{0, valtmp}, sc); //send name of effect, which channel, valtemp which is 1 or 0 on or off
+        }// end if inst
+        else inst.focus = 0; //otherwise turn focus off all other buttons
+      } //ind if inst.ix<100
+    } //end for Press
+    serialgates[0][2] = 0; // Reset gate to 0 to wait for next message
+  } //end Device-0, Header-"bt1"
+  //// Device-0, Header-"bt3" - Turn on effect right ///////////////////////////////////////////////////////////////////////////////////////////////////
+  if (serialgates[0][3] == 1) { //if serialgates[0][0] == 1, means that the serialEvent has opened a gate for device:0, header:1
+    int valtmp = int(serialdatas[0][3]);
+    for (Press inst : pressz.cset) { //cycle through all of the buttons
+      if (inst.ix>=100) { //because the right fx bank starts @100
+        if (inst.ix==(fxtogR+100)) { // if the index of the button equals the current fxtogR, right button indexes start at 100
+          inst.on = valtmp; //bring that button to focus
+          osc.send("/" + inst.label, new Object[]{1, valtmp}, sc); //send name of effect, which channel, valtemp which is 1 or 0 on or off
+        }// end if inst
+        else inst.focus = 0; //otherwise turn focus off all other buttons
+      } //ind if inst.ix<100
+    } //end for Press
+    serialgates[0][3] = 0; // Reset gate to 0 to wait for next message
+  } //end Device-0, Header-"bt1"
 } // End draw
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 // SERIAL EVENT /////////////////////////////////////////////////////////////////////////////////////////
@@ -118,9 +180,11 @@ void serialEvent(Serial serialport) {
   // Read the incomming message
   // Split the message at the ':' to get the header and the data
   String serialmsgtmp = myserials[portnumtmp].readString(); // read the incomming string from the serial port
-  String[] smsgsplittmp = split(serialmsgtmp, ":"); // split the message at the ':'
+  String[] stmp = split(serialmsgtmp, '\n'); // processing adds the hard return so this split puts it in stmp[1] and next line grabs just the message
+  String[] smsgsplittmp = split(stmp[0], ":"); // split the message at the ':'
   String headertmp = smsgsplittmp[0]; // incomming header
   String serialdatatmp = smsgsplittmp[1]; // incomming data
+  serialdatatmp = trim(serialdatatmp);
   // Check if this header exsists for this device in your list serialheaders
   for (int i=0; i<serialheaders[portnumtmp].length; i++) {
     if ( headertmp.equals(serialheaders[portnumtmp][i]) ) { // Check if this header exsists for this device in your list serialheaders

@@ -1,0 +1,17 @@
+/*
+trigger supercollider code using labels as oscmessages
+
+
+Make Other Right Controller
+
+
+
+
+
+
+
+
+
+
+
+*/

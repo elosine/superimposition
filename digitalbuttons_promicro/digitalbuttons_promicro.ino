@@ -1,6 +1,6 @@
-int numbts = 8;
+int numbts = 12;
 int bts[] = {2,3,4,5,6,7,8,9,10,16,14,15};
-boolean bgates[8];
+boolean bgates[12];
 
 void setup() {
   Serial.begin(9600);

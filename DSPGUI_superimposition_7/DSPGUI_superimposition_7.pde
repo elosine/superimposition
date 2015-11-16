@@ -9,8 +9,11 @@ import oscP5.*;
 /////////////////////////////////////////////////////////////////////////////////////////
 //// USER DEFINED Variables /////////////////////////////////////////////////////////////////
 int nfx = 5; //number of fx
+int nsamps = 4; //number of sample banks
+int nsampfx = 3;
 String[] fxlbls = {"Amplify", "RingMod1", "RingMod2", "Freeze", "Samps"};
-int[] myserialnums = {5}; // The numbers of serial ports that you wish to use from the Serial.list() print out when you run the app
+//int[] myserialnums = {5}; // The numbers of serial ports that you wish to use from the Serial.list() print out when you run the app
+int[] myserialnums = {}; 
 //For each of the serial devices, populate serialheaders with the appropriate strings for each serial device
 //The number of arrays in serialheaders needs to be the same as the number of devices in myserialnums
 String[][] serialheaders = { {"bt0", "bt1", "bt2", "bt3"} }; // 2D array to hold the headers you wish to use for each serial device
@@ -26,8 +29,18 @@ int bw1 = 200; // button width
 int bh1 = 45; // button height
 int vgap1 = 10; // vertical space between buttons
 int hgap1 = 30; // horizontal space between buttons
-int btbx1;
-int btby1;
+int btbx1; //total pixels between left side of any two buttons
+int btby1; //total pixels between tops of any two butttons
+int fxsh; //total height of fx bank
+/////// Samples ////////////////////
+int vgap2=5;//gap between sample button and sample effect buttons
+int bw2 = 25; //width of sample fx buttons
+int bh2 = 25; //height of sample fx buttons
+//space between sample banks use vgap1
+int hgap2 = 5; //horiz gap between sample effects buttons
+int btby2; //total pixels between tops of any two sample banks
+float[]sampix;
+float[][]samparrays;
 //// OSC /////////////////////////////////////////////////////////////////////////////////
 OscP5 osc; //OSC Machine
 NetAddress sc; // Supercollider Language/Client Side As Remote Destination
@@ -36,6 +49,9 @@ Serial[] myserials; // Create a list of Serial objects from the Serial class
 ////// Serial Data
 int[][] serialgates; // A 2D array to store gates for serial events per serial device, per header
 String[][] serialdatas; // A 2D array to store serial data per serial device, per header
+//// Other ///////////////////////////////////////////////////////////////////////////////////////
+int fxtogL = nfx-1; //a toggle for the left bank of fx
+int fxtogR = nfx-1; //a toggle for the right bank of fx
 ////////////////////////////////////////////////////////////////////////////////////////////
 // SETUP /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -61,8 +77,17 @@ void setup() {
   for (int i=0; i<myserialnums.length; i++) {
     String portnametemp = Serial.list()[ myserialnums[i] ]; //get name of port
     myserials[i] = new Serial(this, portnametemp, 9600); //populate myserials and open the ports
+    myserials[i].bufferUntil(10); //this will buffer the serial message until it gets a hard return (ASCII code 10) and then forward to serialEvent
   }  // End for myserialnums
   // Initialize serialgates and serialdatas with 0s & empty strings respectively
+  serialgates = new int[myserialnums.length][0];
+  serialdatas = new String[myserialnums.length][0];
+  for (int i=0; i<myserialnums.length; i++) {
+    for (int j=0; j<serialheaders[i].length; j++) {
+      serialgates[i] = append(serialgates[i], 0);
+      serialdatas[i] = append(serialdatas[i], "");
+    }
+  }
   for (int i=0; i<myserialnums.length; i++) {
     for (int j=0; j<serialheaders[i].length; j++) {
       serialgates[i][j] = 0;
@@ -74,16 +99,32 @@ void setup() {
   //// Drawing  /////////////////////////////////////////////////////////////////////////////////
   btby1 = bh1+vgap1; // vertical space between one button and the next
   btbx1 = bw1+hgap1; // horizontal space betwwen one button and the next
+  fxsh = margin + (btby1*nfx); //total height in pixels of top fx section
+  btby2 = bh1+vgap2+bh2+vgap1; // vertical space between one button and the next
+  //// Samples  /////////////////////////////////////////////////////////////////////////////////
+  sampix = new float[nsamps]; //hold index values for samples
+  for (int i=0; i<nsamps; i++) sampix[i]=0.0; //populate w/0
+  samparrays = new float[nsamps][bw1];
+  for (int i=0; i<samparrays.length; i++) {
+    for (int j=0; j<samparrays[i].length; j++) samparrays[i][j]=0.0;
+  }
   //// Classes ///////////////////////////////////////////////////////////////////////////////
   ////// Press (Buttons) ///////////////////////////////////////////////////////////////////////////////
   osc.plug(pressz, "mk", "/mkpress");
   osc.plug(pressz, "rmv", "/rmvpress");
   osc.plug(pressz, "rmvall", "/rmvallpress");
+  ////// Get Index function
+  osc.plug(this, "ix", "/ix");
   //////// Make Buttons ///////////////////////////////////////////////////////////////////////////////
-  ////////// Left - indexes 0, 1...
+  ////////// Left FX - indexes 0, 1...
   for (int i=0; i<nfx; i++) pressz.mk(i, margin, margin + (btby1*i), bw1, bh1, clrset[i%clrset.length], fxlbls[i%fxlbls.length]);
-  ////////// Right - indexes 100, 101...
+  ////////// Right FX - indexes 100, 101...
   for (int i=0; i<nfx; i++) pressz.mk(100+i, margin+hgap1+bw1, margin + (btby1*i), bw1, bh1, clrset[i%clrset.length], fxlbls[i%fxlbls.length]);
+  ////////// Left Samps - indexes 200, 201...
+  for (int i=0; i<nsamps; i++) pressz.mk(200+i, margin, fxsh+(btby2*i), bw1, bh1, "orange", ""); //sample buttons
+  //for (int i=0; i<nsamps; i++) pressz.mk(200+i, margin, fxsh+(btby2*i), bw1, bh1, "orange", ""); //sample buttons
+  ////////// Right Samps - indexes 300, 301...
+  for (int i=0; i<nsamps; i++) pressz.mk(300+i, margin+hgap1+bw1, fxsh+(btby2*i), bw1, bh1, "orange", "");
 } // End Setup
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // DRAW /////////////////////////////////////////////////////////////////////////////////////////
@@ -91,14 +132,96 @@ void setup() {
 void draw() {
   background(0);
   pressz.drw(); //draw button
-  // Use an if statement on a serialgate in draw to invoke actions
-  //// Device-1, Header-"bt0"
-  if (serialgates[0][0] == 1) {
-    // Run a function or action here
-    // For example: someint = int(serialdatas[0][2]);
-    // Or: movesomething();
-    serialgates[0][0] = 0; // Reset gate to 0 to wait for next message
-  }
+  // SERIAL DEVICE ACTIONS ///////////////////////////////////////////////////////////////////////////////////////////////////////
+  //// Device-0, Header-"bt0" - Toggle Left Fx /////////////////////////////////////////////////////////////////////////////////////////////////////
+  if (myserialnums.length>0) { //only if there are listed serial devices
+    if (serialgates[0][0] == 1) { //if serialgates[0][0] == 1, means that the serialEvent has opened a gate for device:0, header:0
+      int valtmp = int(serialdatas[0][0]);
+      fxtogL = (fxtogL + valtmp)%nfx; // increment fxtogL //put this line here for on press
+      for (Press inst : pressz.cset) { //cycle through all of the buttons
+        if (inst.ix<100) { //because the right fx bank starts @100
+          if (inst.ix==fxtogL) { // if the index of the button equals the current fxtogL
+            inst.focus = 1; //bring that button to focus
+          }// end if inst
+          else inst.focus = 0; //otherwise turn focus off all other buttons
+        } //end if inst.ix<100
+      } //end for Press
+      // fxtogL = (fxtogL + int(serialdatas[0][0]))%nfx; // increment fxtogL //put this line here for on release
+      serialgates[0][0] = 0; // Reset gate to 0 to wait for next message
+    } //end Device-0, Header-"bt0"
+    //// Device-0, Header-"bt1" - Toggle Rfx ///////////////////////////////////////////////////////////////////////////////////////////////////
+    if (serialgates[0][1] == 1) { //if serialgates[0][0] == 1, means that the serialEvent has opened a gate for device:0, header:1
+      int valtmp = int(serialdatas[0][1]);
+      fxtogR = (fxtogR + valtmp)%nfx; // increment fxtogL
+      for (Press inst : pressz.cset) { //cycle through all of the buttons
+        if (inst.ix>=100) { //because the right fx bank starts @100
+          if (inst.ix==(fxtogR+100)) { // if the index of the button equals the current fxtogR, right button indexes start at 100
+            inst.focus = 1; //bring that button to focus
+          }// end if inst
+          else inst.focus = 0; //otherwise turn focus off all other buttons
+        } //ind if inst.ix>=100
+      } //end for Press
+      serialgates[0][1] = 0; // Reset gate to 0 to wait for next message
+    } //end Device-0, Header-"bt1"
+    //// Device-0, Header-"bt2" - Turn on effect left ///////////////////////////////////////////////////////////////////////////////////////////////////
+    if (serialgates[0][2] == 1) { //if serialgates[0][0] == 1, means that the serialEvent has opened a gate for device:0, header:1
+      int valtmp = int(serialdatas[0][2]);
+      for (Press inst : pressz.cset) { //cycle through all of the buttons
+        if (inst.ix<100) { //because the right fx bank starts @100
+          if (inst.ix==fxtogL) { // if the index of the button equals the current fxtogR, right button indexes start at 100
+            inst.on = valtmp; //bring that button to focus
+            osc.send("/" + inst.label, new Object[]{0, valtmp}, sc); //send name of effect, which channel, valtemp which is 1 or 0 on or off
+          }// end if inst
+          else inst.focus = 0; //otherwise turn focus off all other buttons
+        } //ind if inst.ix<100
+      } //end for Press
+      serialgates[0][2] = 0; // Reset gate to 0 to wait for next message
+    } //end Device-0, Header-"bt1"
+    //// Device-0, Header-"bt3" - Turn on effect right ///////////////////////////////////////////////////////////////////////////////////////////////////
+    if (serialgates[0][3] == 1) { //if serialgates[0][0] == 1, means that the serialEvent has opened a gate for device:0, header:1
+      int valtmp = int(serialdatas[0][3]);
+      for (Press inst : pressz.cset) { //cycle through all of the buttons
+        if (inst.ix>=100) { //because the right fx bank starts @100
+          if (inst.ix==(fxtogR+100)) { // if the index of the button equals the current fxtogR, right button indexes start at 100
+            inst.on = valtmp; //bring that button to focus
+            osc.send("/" + inst.label, new Object[]{1, valtmp}, sc); //send name of effect, which channel, valtemp which is 1 or 0 on or off
+          }// end if inst
+          else inst.focus = 0; //otherwise turn focus off all other buttons
+        } //ind if inst.ix<100
+      } //end for Press
+      serialgates[0][3] = 0; // Reset gate to 0 to wait for next message
+    } //end Device-0, Header-"bt1"
+  } //end if(myserialnums.length>0) {
+
+  //  DRAW SAMPLE INDEXES ////////////////////////////////////////////////////////////////////////////
+
+  //left samples
+  for (int i=0; i<nsamps; i++) {
+    osc.send("/getidx", new Object[]{i}, sc);
+    int sl = 0;
+    int st = 0;
+    int sb = 0;
+    int sh = 0;
+    float sw = 0.0;
+    for (Press inst : pressz.cset) {
+      if (inst.ix == (i+200) ) {
+        sl = inst.l;
+        st = inst.t;
+        sb = inst.b;
+        sw = inst.w;
+        sh = inst.h;
+      } //end if inst.ix
+      stroke(153, 255, 0);
+      strokeWeight(1);
+      line( sl+(sampix[i]*sw), st, sl+(sampix[i]*sw), sb );
+      //waveform display
+      stroke(0, 0, 255);
+      strokeWeight(1);
+      for (int j=1; j<bw1; j++) {
+        line( sl+j-1, st+(sh/2)-( (sh/2)*samparrays[i][j-1]), sl+j, st+(sh/2)-((sh/2)*samparrays[i][j]));
+      }
+    } // end for Press
+  } //end for nsamps
 } // End draw
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 // SERIAL EVENT /////////////////////////////////////////////////////////////////////////////////////////
@@ -118,9 +241,11 @@ void serialEvent(Serial serialport) {
   // Read the incomming message
   // Split the message at the ':' to get the header and the data
   String serialmsgtmp = myserials[portnumtmp].readString(); // read the incomming string from the serial port
-  String[] smsgsplittmp = split(serialmsgtmp, ":"); // split the message at the ':'
+  String[] stmp = split(serialmsgtmp, '\n'); // processing adds the hard return so this split puts it in stmp[1] and next line grabs just the message
+  String[] smsgsplittmp = split(stmp[0], ":"); // split the message at the ':'
   String headertmp = smsgsplittmp[0]; // incomming header
   String serialdatatmp = smsgsplittmp[1]; // incomming data
+  serialdatatmp = trim(serialdatatmp);
   // Check if this header exsists for this device in your list serialheaders
   for (int i=0; i<serialheaders[portnumtmp].length; i++) {
     if ( headertmp.equals(serialheaders[portnumtmp][i]) ) { // Check if this header exsists for this device in your list serialheaders
@@ -204,3 +329,22 @@ void buttonActions(int ix, int state) {
     break;
   } // end switch
 } // end button actions
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+// IX Function /////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+void ix(int sampnum, float val) {
+  sampix[sampnum] = val;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+// OSCEVENT /////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+void oscEvent(OscMessage msg) {
+  //get waveform data and store in samparrays
+  if ( msg.checkAddrPattern("/sbuf") ) {
+    int sampnum = msg.get(0).intValue();
+    println(sampnum);
+    for (int i=0; i<bw1; i++) {
+      if (i>0) samparrays[sampnum][i] = msg.get(i).floatValue();
+    }
+  }
+}
