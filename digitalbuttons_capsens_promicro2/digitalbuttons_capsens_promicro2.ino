@@ -7,12 +7,12 @@ boolean bgates[10];
 //Capacitive Sensors
 int numcps = 2;
 //CapacitiveSensor cps[] = {CapacitiveSensor(21, 14), CapacitiveSensor(21, 15), CapacitiveSensor(21, 18), CapacitiveSensor(21, 19), CapacitiveSensor(21, 20)};
-//CapacitiveSensor cps[] = {CapacitiveSensor(21, 14), CapacitiveSensor(21, 15)};
-CapacitiveSensor cps[] = {CapacitiveSensor(21, 14)};
-boolean cpsgates[1];
-long cpsval[1];
+CapacitiveSensor cps[] = {CapacitiveSensor(21, 14), CapacitiveSensor(21, 15)};
+//CapacitiveSensor cps[] = {CapacitiveSensor(21, 14)};
+boolean cpsgates[2];
+long cpsval[2];
 void setup() {
-  Serial.begin(19200);
+  Serial.begin(9600);
   for (int i = 0; i < numbts; i++) pinMode(bts[i], INPUT_PULLUP);
   for (int i = 0; i < numbts; i++) bgates[i] = false;
   for (int i = 0; i < numcps; i++) cpsgates[i] = true;
@@ -37,8 +37,8 @@ void loop() {
     }
   }
   //Capacitive Sensors
-  long val = cps[0].capacitiveSensor(30);
-  Serial.println(val);
+ //long val = cps[0].capacitiveSensor(30);
+ // Serial.println(val);
   for (int i = 0; i < numcps; i++) {
     cpsval[i] = cps[i].capacitiveSensor(30);
     if (cpsval[i] >= 5000) {
@@ -57,5 +57,5 @@ void loop() {
     }
   }
 
-  delay(5);
+  delay(15);
 }
