@@ -11,6 +11,7 @@ CapacitiveSensor cps[] = {CapacitiveSensor(21, 14), CapacitiveSensor(21, 15)};
 //CapacitiveSensor cps[] = {CapacitiveSensor(21, 14)};
 boolean cpsgates[2];
 long cpsval[2];
+boolean bothpressed = true;
 void setup() {
   Serial.begin(9600);
   for (int i = 0; i < numbts; i++) pinMode(bts[i], INPUT_PULLUP);
@@ -37,14 +38,9 @@ void loop() {
     }
   }
   //Capacitive Sensors
-  long val1 = cps[0].capacitiveSensor(30);
-  long val2 = cps[1].capacitiveSensor(30);
-  Serial.print(val1);
-  Serial.print(":");
-  Serial.println(val2);
   for (int i = 0; i < numcps; i++) {
-    //cpsval[i] = cps[i].capacitiveSensor(30);
-    if (cpsval[i] >= 4000) {
+    cpsval[i] = cps[i].capacitiveSensor(30);
+    if (cpsval[i] > 5000) {
       if (cpsgates[i]) {
         cpsgates[i] = false;
         Serial.print("cs" + String(i) + ":");
@@ -59,6 +55,5 @@ void loop() {
       }
     }
   }
-
-  delay(150);
+  delay(15);
 }

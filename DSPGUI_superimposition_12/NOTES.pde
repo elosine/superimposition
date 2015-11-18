@@ -1,0 +1,37 @@
+/*
+HOOK UP PROCESSING TO SAMPLE EFFECTS
+
+MAKE AN KILL ALL AUDIO AND A RESTART
+REPLACE CAPACITIVE BUTTONS WITH REGULAR SWITCHES
+
+
+
+HOOK UP SAMPLE RECORD AND PLAYBACK AND WAVEFORMS
+SAMPLE EFFECTS WITH GRANULATION
+
+MAKE AN KILL ALL AUDIO AND A RESTART
+REPLACE CAPACITIVE BUTTONS WITH REGULAR SWITCHES
+
+
+Fix sample indexes and waveforms
+Record toggle
+Record & Play osc
+
+
+
+trigger supercollider code using labels as oscmessages
+
+
+Make Other Right Controller
+
+
+
+
+
+
+
+
+
+
+
+*/

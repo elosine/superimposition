@@ -20,15 +20,17 @@ class Press {
   // CONSTRUCTOR VARIALBES //
   int ix, x, y, w, h;
   String cl, label;
-  color focusclr = clr.get("white");
-  color focusclr2 = clr.get("red");
-  color onclr = clr.get("yellow");
   // CLASS VARIABLES //
   int t, b, l, r, val;
   float m, c;
   int on = 0;
+  int on2 = 0;
   int focus = 0;
   int focus2 = 0;
+  color focusclr = clr.get("white");
+  color focusclr2 = clr.get("red");
+  color onclr = clr.get("yellow");
+  color on2clr = clr.getAlpha("red", 100);
   // CONSTRUCTORS //
 
   /// Constructor 1 ///
@@ -53,9 +55,13 @@ class Press {
   void drw() {
     rectMode(CORNER);
     strokeWeight(5);
+    if (focus2 == 1) {
+      stroke(focusclr2);
+      noFill();
+      rect(x-4, y-4, w+8, h+8);
+    }
     if (mo()==1 || focus==1) stroke(focusclr);
-    else if(focus2 == 1) stroke(focusclr2);
-    else noStroke();
+    if (mo()==0 && focus==0 && focus2==0) noStroke();
     if (on==1) fill(onclr);
     else fill(clr.get(cl));
     rect(x, y, w, h);
@@ -63,6 +69,11 @@ class Press {
     fill(0);
     textFont(font1);
     text( label, c, m );
+    if(on2==1){ //secondary shading
+    fill(on2clr);
+    noStroke();
+    rect(x, y, w, h);
+    }
   } //End drw
 
   //// Mouse Over
