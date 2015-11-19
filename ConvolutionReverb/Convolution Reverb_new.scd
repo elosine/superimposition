@@ -14,17 +14,12 @@ fork{
 		~newimpulse = { |inum|
 			fork{
 				~cr.free; ~cr=nil;
-
-				0.3.wait;
-
 				~cr = EZConv(~impulses[inum].path);
-
-				0.3.wait;
-
+			//	0.05.wait;
 				//INSPECT
 				~cr.numChannels;
 				~cr.irSpectrum;
-				0.3.wait;
+				//0.05.wait;
 				//USE IN SYNTH DEF
 				SynthDef(\convRev, {
 					arg sourcebuf, sourcegain=1, gain=0.5, spd=1, start=0.0, end=1.0;
@@ -92,12 +87,13 @@ c.free;
 
 //Kill synth before setting a new impulse
 (
-c.free;
+a.free;
 g = ~impulses.size.rand.round;
 ~newimpulse.value(g);
 ~impulses[g];
 )
-c = Synth(\convRevLive);
+a = Synth(\convRev, [\sourcebuf, ~s1] );
+a = Synth(\convRevLive);
 
 
 // A TEST IMPULSE
@@ -112,3 +108,4 @@ v.free;
 x.free;
 
 ~impulses[0].path
+Platform.systemExtensionDir
