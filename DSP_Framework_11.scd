@@ -393,26 +393,33 @@ s.waitForBoot{
 			var recnode = irecnode+sampnum; //node for record synth
 			var idxnode = iIdxnode+sampnum; //node of idx synth
 			var playnode = iplaynode+sampnum; //node for bufplay synth
-			if(sampnum<numsamps,{ //is the sampnum less than the allocated num samples
-				if(state==1, { //if state1, record
-					//Stop any playback
-					if(playmodes[sampnum]==0, {s.sendMsg(\n_set, playnode, \gate, 0)});
-					//Make a new index synth, kill old index synth
-					s.sendMsg(\n_free, idxnode);
-					s.sendMsg(\s_new, \bufidx, idxnode, 0, idxgr.nodeID, \buf, idxbufs[sampnum].bufnum, \bus, idxAbusses[sampnum].index, \kbus, idxKbusses[sampnum].index, \start, 0.0);
-					//Make a new record synth - synthdefname, node number, , addaction (0=head of group)group, args
-					s.sendMsg(\s_new, \bufrec, recnode, 0, recgr.nodeID, \ich, ch, \idxbus, idxAbusses[sampnum].index, \buf, sampbufs[sampnum].bufnum);
-					recstartidxval[sampnum] = idxKbusses[sampnum].getSynchronous.asFloat;
-					}, { // end if state = 1, begin else (state=0), stop recording
-						s.sendMsg(\n_set, recnode, \gate, 0); //set gate of recording synth to 0, doneAction:2 will auto kill synth
-						s.sendMsg(\n_set, idxnode, \end, idxKbusses[sampnum].getSynchronous.asFloat); //set index end time to the time you end the recording
-						recendidxval[sampnum] = idxKbusses[sampnum].getSynchronous.asFloat+ (0.08/maxsamplength); //store end time
-						waveformFunc.value(sampnum);
-						s.sendMsg(\n_set, playnode, \start, recstartidxval[sampnum], \end, recendidxval[sampnum], \t_tr, 1);
-						recstartidxval[sampnum].post; ":".post; recendidxval[sampnum].postln;
-				}); // end else if state != 1 (state=0 or off)
-			})//end if sampnum<numsamps
-		}, "/rec");
+			fork{
+				if(sampnum<numsamps,{ //is the sampnum less than the allocated num samples
+					if(state==1, { //if state1, record
+						//Stop any playback
+						if(playmodes[sampnum]==0, {s.sendMsg(\n_set, playnode, \gate, 0)});
+						//Make a new index synth, kill old index synth
+						s.sendMsg(\n_free, idxnode);
+						s.sendMsg(\s_new, \bufidx, idxnode, 0, idxgr.nodeID, \buf, idxbufs[sampnum].bufnum, \bus, idxAbusses[sampnum].index, \kbus, idxKbusses[sampnum].index, \start, 0.0);
+						//Make a new record synth - synthdefname, node number, , addaction (0=head of group)group, args
+						s.sendMsg(\s_new, \bufrec, recnode, 0, recgr.nodeID, \ich, ch, \idxbus, idxAbusses[sampnum].index, \buf, sampbufs[sampnum].bufnum);
+						recstartidxval[sampnum] = idxKbusses[sampnum].getSynchronous.asFloat;
+						}, { // end if state = 1, begin else (state=0), stop recording
+							s.sendMsg(\n_set, recnode, \gate, 0); //set gate of recording synth to 0, doneAction:2 will auto kill synth
+							s.sendMsg(\n_set, idxnode, \end, idxKbusses[sampnum].getSynchronous.asFloat); //set index end time to the time you end the recording
+							recendidxval[sampnum] = idxKbusses[sampnum].getSynchronous.asFloat+ (0.08/maxsamplength); //store end time
+							s.sendMsg(\n_set, playnode, \start, recstartidxval[sampnum], \end, recendidxval[sampnum], \t_tr, 1);
+							waveformFunc.value(sampnum);
+							0.1.wait;
+							proc.sendMsg("/renderwf", sampnum);
+					}); // end else if state != 1 (state=0 or off)
+				})//end if sampnum<numsamps
+			}//end fork
+		}, "/rec"); //end oscdef
+
+		OSCdef(\getwavfrm,{ |msg|
+			waveformFunc.value(msg[1].asInteger);
+		}, "/getwavfrm");
 
 		OSCdef(\playmode, {|msg|
 			var sampnum = msg[1].asInteger; //which bank
@@ -510,19 +517,22 @@ s.waitForBoot{
 			buf.loadToFloatArray(0, count, action:{
 				arg array;
 				var bufarray, sampsize, resamp, resampArray, ct;
-				bufarray = array;
-				//RESAMPLE TO MANAGEABLE SIZE
-				sampsize = 200; //Make sure to change this if you change pixel width of sampler
-				resamp = (bufarray.size/sampsize).round;
-				resampArray = Array.newClear(sampsize+2); //This is the new resampled array
-				ct = 0; //A counter for the resampled array
-				//RESAMPLE THE BUFFER ARRAY AND PUT THE VALUES INTO A NEW ARRAY AS FLOATS
-				bufarray.do{ |it, ix| if( ix%resamp == 0, {resampArray[ct]=it.asFloat; ct = ct+1} ) };
-				//ADD TRACK NUMBER AND OSC ADDRESS
-				resampArray = resampArray.insert(0, sampnum.asInteger);
-				resampArray = resampArray.insert(0, "/sbuf");
-				//SEND TO PROCESSING
-				proc.sendBundle(0.0, resampArray);
+				fork{
+					bufarray = array;
+					//RESAMPLE TO MANAGEABLE SIZE
+					sampsize = 200; //Make sure to change this if you change pixel width of sampler
+					resamp = (bufarray.size/sampsize).round;
+					resampArray = Array.newClear(sampsize+2); //This is the new resampled array
+					ct = 0; //A counter for the resampled array
+					//RESAMPLE THE BUFFER ARRAY AND PUT THE VALUES INTO A NEW ARRAY AS FLOATS
+					bufarray.do{ |it, ix| if( ix%resamp == 0, {resampArray[ct]=it.asFloat; ct = ct+1} ) };
+					//ADD TRACK NUMBER AND OSC ADDRESS
+					resampArray = resampArray.insert(0, sampnum.asInteger);
+					resampArray = resampArray.insert(0, "/sbuf");
+					resampArray.postln;
+					//SEND TO PROCESSING
+					proc.sendBundle(0.0, resampArray);
+				}
 			} );
 		};
 

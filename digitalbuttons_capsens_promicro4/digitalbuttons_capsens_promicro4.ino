@@ -55,5 +55,5 @@ void loop() {
       }
     }
   }
-  delay(15);
+  delay(30);
 }
