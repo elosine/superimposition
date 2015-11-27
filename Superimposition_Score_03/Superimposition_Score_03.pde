@@ -7,6 +7,9 @@ import java.util.Arrays;
 OscP5 osc;
 NetAddress sc;
 NetAddress me;
+
+PFont font1;
+
 float h = 900;
 float w = 1434;
 float x0 = 0; //starting x of the track (in case you need a left-margin)
@@ -38,10 +41,14 @@ float[][] svgwh; //width & height of svgPShape
 
 //Score
 int scrix = 0;
+int scrclkon = 1;
+int scrinc = 1;
+int srate = 1;
+int scrnumon = 1;
 
 void setup() {
   size(1434, 900);
-   surface.setResizable(true); // Allow the canvas to be resizeable
+  surface.setResizable(true); // Allow the canvas to be resizeable
   surface.setSize(int(w), int(h)); 
   //fullScreen();
   OscProperties properties= new OscProperties();
@@ -51,7 +58,7 @@ void setup() {
   osc= new OscP5(this, properties);
   sc = new NetAddress("127.0.0.1", 57120);
   me = new NetAddress("127.0.0.1", 12321);
-
+  
   osc.plug(this, "ix", "/ix");
   osc.plug(this, "trix", "/trix");
 
@@ -77,6 +84,12 @@ void setup() {
   osc.plug(setNotationDraw, "mk", "/mknotedrw");
   osc.plug(setNotationDraw, "rmv", "/rmvnotedrw");
   osc.plug(this, "togcsr", "/togcsr");
+  osc.plug(this, "scrclk", "/scrclk");
+  osc.plug(this, "scrnum", "/scrnum");
+  osc.plug(this, "scrrate", "/scrrate");
+  
+  font1 = loadFont("Monaco-24.vlw");
+  textFont(font1);
 
   trw = w-x0; //track width
   btw = trw/totalbts; //width of each beat in pixels
@@ -120,9 +133,8 @@ void setup() {
   maketuplets();
   mkrset();
   mkr();
+  score(0);
 
-
-  //setSVGdisplay.mk(0, "Bartok_pizz.svg", 130, 50, 20);
 }
 
 void draw() {
@@ -138,6 +150,12 @@ void draw() {
     //t2
     fill(25, 33, 47);
     rect(x0, (trht*2*i)+trht, w, trht);
+  }
+  
+  //Score Numbers
+  if(scrnumon ==1){
+    fill(255, 128, 0);
+    text(scrix, width-30, 30);
   }
 
   //DRAW DYNAMICS & PITCH CLASS
@@ -172,17 +190,21 @@ void draw() {
   }
 
   //CURSOR
-  /**/  osc.send("/getidx", new Object[]{}, sc); //get current cursor location from sc
+  osc.send("/getidx", new Object[]{}, sc); //get current cursor location from sc
   //toggle cursor between staves when it reaches the end of 
   if (csrg) {
     if ( cx>=0 && cx<20 ) { //when cursor flips back to 0
       csrtog = (csrtog+1)%2;
-      score(scrix); //up date with next score item
-      scrix++; // increment score counter
+      if (scrclkon == 1) {
+        if (scrinc%srate == 0) { //
+          score(scrix); //up date with next score item
+          scrix = scrix + 1; // increment score counter
+        }
+        scrinc++;
+      }
       csrg = false;
     }
-  } 
-  //
+  } //
   else { //when it passes 20 reset gate
     if ( cx>20 ) {
       csrg = true;
@@ -196,7 +218,7 @@ void draw() {
   //INDIVIDUAL TRACK CURSORS
   for (int i=0; i<numtrx; i++) {
     if (trcsr[i]==1) {
-      /**/      osc.send("/gettridx", new Object[]{i}, sc); //get current cursor location from sc
+      osc.send("/gettridx", new Object[]{i}, sc); //get current cursor location from sc
       strokeWeight(3);
       stroke(0, 153, 255);
       line( tcx[i], trht*i, tcx[i], trht*(i+1) );
@@ -211,8 +233,7 @@ void mousePressed() {
       if ( whichtrack()==i && mouseX>x0 ) {
         ranger[i] = 0;
         trcsr[i] = 0;
-        println(i);
-        /**/        osc.send("/setidx", new Object[]{ -1, 0, 1, 1 }, sc);
+        osc.send("/setidx", new Object[]{ -1, 0, 1, 1 }, sc);
       }
     }
     if (mouseButton == LEFT) {
@@ -288,6 +309,19 @@ int whichtrack() {
 }
 
 //TOGGLE THE CURSOR BETWEEN SYSTEMS
-void togcsr(int pos){
+void togcsr(int pos) {
   csrtog = pos;
+}
+//Control the Score Clock
+void scrclk(int on) {
+  scrclkon = on;
+}
+//Go To System Num
+void scrnum(int sys) {
+  scrix = sys;
+  score(sys);
+}
+//Change page turn rate
+void scrrate(int rate) {
+  srate = rate;
 }
