@@ -482,6 +482,8 @@ void score(int sys) {
     //system 1 off
     osc.send("/drh", new Object[]{4, 2, 0}, me);
     osc.send("/drh", new Object[]{5, 3, 0}, me);
+    break;
+  case 39:
     //system 2 off
     osc.send("/drh", new Object[]{6, 2, 0}, me);
     osc.send("/drh", new Object[]{3, 3, 0}, me);

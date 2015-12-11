@@ -112,10 +112,12 @@ void score(int sys) {
     /////////////////////////////////////////////////////////////////////////////
   case 12: ////// P7.A7.1 - System 1  
     osc.send("/chgart", new Object[]{2, "0:2", 1}, me);
+    osc.send("/chgart", new Object[]{9, "10:11", 1}, me);
     scrix = sys;
     break;
   case 13: ////// P7.A7.2 - System 2 
-    osc.send("/chgart", new Object[]{9, "10:11", 1}, me);
+    osc.send("/chgart", new Object[]{1009,"0:2",1}, me);
+    osc.send("/chgart", new Object[]{1002,"10:11",1}, me);
     scrix = sys;
     break;
     //////////////////////////////////////////////////////////////////////////////
@@ -143,7 +145,9 @@ void score(int sys) {
     //Sustained Notes
     osc.send("/mksus", new Object[]{7, 7}, me);
     osc.send("/mksus", new Object[]{8, 7}, me);
-    ////// NEW ARTICULATION MENU //////
+    //Articulations 
+    osc.send("/chgart", new Object[]{7,"2:3",2}, me);
+    osc.send("/chgart", new Object[]{8,"10:2",2}, me);
     scrix = sys;
     break;
   case 15: ////// P8.B1.2 - System 2
@@ -161,7 +165,9 @@ void score(int sys) {
     //Sustained Notes
     osc.send("/mksus", new Object[]{3, 5}, me);
     osc.send("/mksus", new Object[]{0, 6}, me);
-    ////// NEW ARTICULATION MENU //////
+    //Articulations 
+    osc.send("/chgart", new Object[]{3,"2:3",2}, me);
+    osc.send("/chgart", new Object[]{0,"10:2",2}, me);
     scrix = sys;
     break;
     /////////////////////////////////////////////////////////////////////////////
