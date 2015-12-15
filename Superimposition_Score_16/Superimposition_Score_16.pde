@@ -10,8 +10,8 @@ NetAddress me;
 
 PFont font1;
 
-float h = 900;
-float w = 1434;
+float h = 1200;
+float w = 1600;
 float x0 = 0; //starting x of the track (in case you need a left-margin)
 float trht, trhf;  //height of track and vertical half-way point of track
 float cx=0; //x of main cursor

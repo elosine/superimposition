@@ -432,7 +432,7 @@ void score(int sys) {
     break;
     //////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////
-    // SECTION D (2:00, 4 pages, 8 systems) - changes every system
+    // SECTION D (2:00, 4 pages, 8 systems) - changes every system unisons
     //// Page 21 (10:00-10:30, 0:30)
     ////// Rhythms: 0,2
     ////// Pitch Set/Range
@@ -724,6 +724,7 @@ void sys2clr() {
 }
 
 void clrall() {
+  osc.send("/clear", new Object[]{}, me);
   osc.send("/drh", new Object[]{1000, 3, 0}, me);
   osc.send("/drh", new Object[]{1002, 2, 0}, me);
   osc.send("/drh", new Object[]{3, 2, 0}, me);
@@ -752,16 +753,17 @@ void clrall() {
   osc.send("/rmvnotedrw", new Object[]{0}, me);
   osc.send("/rmvnotedrw", new Object[]{2}, me);
   osc.send("/rmvnotedrw", new Object[]{4}, me);
-    osc.send("/chgart", new Object[]{6, "none", 0}, me);
-    osc.send("/chgart", new Object[]{3, "none", 0}, me);
-    osc.send("/chgart", new Object[]{1000, "none", 0}, me);
-    osc.send("/chgart", new Object[]{1002, "none", 0}, me);
-    osc.send("/chgart", new Object[]{1007, "none", 0}, me);
-    osc.send("/chgart", new Object[]{1010, "none", 0}, me);
-    osc.send("/chgart", new Object[]{11, "none", 0}, me);
-    osc.send("/chgart", new Object[]{1009, "none", 0}, me);
-    osc.send("/chgart", new Object[]{7, "none", 0}, me);
-    osc.send("/chgart", new Object[]{8, "none", 0}, me);
-    osc.send("/chgart", new Object[]{9, "none", 0}, me);
-    osc.send("/chgart", new Object[]{10, "none", 0}, me);
+  osc.send("/chgart", new Object[]{6, "none", 0}, me);
+  osc.send("/chgart", new Object[]{3, "none", 0}, me);
+  osc.send("/chgart", new Object[]{1000, "none", 0}, me);
+  osc.send("/chgart", new Object[]{1002, "none", 0}, me);
+  osc.send("/chgart", new Object[]{1007, "none", 0}, me);
+  osc.send("/chgart", new Object[]{1010, "none", 0}, me);
+  osc.send("/chgart", new Object[]{11, "none", 0}, me);
+  osc.send("/chgart", new Object[]{1009, "none", 0}, me);
+  osc.send("/chgart", new Object[]{7, "none", 0}, me);
+  osc.send("/chgart", new Object[]{8, "none", 0}, me);
+  osc.send("/chgart", new Object[]{9, "none", 0}, me);
+  osc.send("/chgart", new Object[]{10, "none", 0}, me);
+  osc.send("/chgart", new Object[]{2, "none", 0}, me);
 }

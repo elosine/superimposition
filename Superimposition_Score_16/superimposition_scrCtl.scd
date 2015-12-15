@@ -26,15 +26,15 @@ s.waitForBoot {
 
 		////OSCDEFS////
 		//On Demand normalized index
-		OSCdef( \getidx,{ ~ixkbuses[0].get({arg val; ~proc.sendMsg("/ix", val)}) }, "/getidx");
+		OSCdef( \getidx2,{ ~ixkbuses[0].get({arg val; ~proc.sendMsg("/ix", val)}) }, "/getidx");
 
-		OSCdef( \gettridx,{
+		OSCdef( \gettridx2,{
 			arg msg;
 			var tr = msg[1].asInteger;
 			~ixkbuses[tr+1].get({arg val; ~proc.sendMsg("/trix", tr, val.asFloat)}) ;
 		}, "/gettridx");
 
-		OSCdef( \setidx,{
+		OSCdef( \setidx2,{
 			arg msg;
 			var trnum, start, end, spd;
 			trnum = msg[1].asInteger;
@@ -77,7 +77,7 @@ s.waitForBoot {
 				~b= Button()
 				.states_([ ["Go", Color.black, Color.green],
 					["Stop", Color.black, Color.red] ])
-				.action_({|bt|~ixsynths[0].set(\spd, bt.value)})
+				.action_({|bt|~ixsynths[0].set(\spd, bt.value/*0.667*/)})
 				.minHeight_(80),
 				TextField().action_({|tf|~srun.value(tf.value.asInteger);~b.value_(0)})
 				.font_(Font("Monaco", 33))
@@ -90,5 +90,5 @@ s.waitForBoot {
 )
 
 
-
+s.meter
 
