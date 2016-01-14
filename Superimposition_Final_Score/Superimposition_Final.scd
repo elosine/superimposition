@@ -28,7 +28,7 @@ s.waitForBoot{
 		var kbus = {Bus.control(s, 33)}!20;
 		var totalframes = 44100*16;
 		var freezebuf = Buffer.alloc(s, s.sampleRate*2); //buffer for freeze effect
-		var envbufs = SoundFile.collectIntoBuffers("/Users/jyang/GitHub/superimposition/Final_Score/grainEnv/*");
+		var envbufs = SoundFile.collectIntoBuffers("/Users/jyang/GitHub/superimposition/Superimposition_Final_Score/grainEnv/*");
 		var playa = 0;
 
 		//SYNTH DEFS
@@ -219,7 +219,8 @@ s.waitForBoot{
 				switch( mode,
 					0, {
 						s.sendMsg(\n_set, 10000+gr, \gate, 0);
-						procfx.sendMsg("/slclear");
+						//procfx.sendMsg("/slclear");
+						fork{2.do{|ix| procfx.sendMsg("/rmsl", ix.asInteger); 0.1.wait;}};
 						procfx.sendMsg("/rmvbt", 100);
 					},
 					1, {
@@ -262,7 +263,8 @@ s.waitForBoot{
 				switch( mode,
 					0, {
 						s.sendMsg(\n_set, 7000+gr, \gate, 0);
-						procfx.sendMsg("/slclear");
+						//procfx.sendMsg("/slclear");
+						fork{1.do{|ix| procfx.sendMsg("/rmsl", ix.asInteger); 0.1.wait;}};
 					},
 					1, {
 						s.sendMsg( \s_new, lbl, 7000+gr, 0, g2.nodeID, \ibs, sampbus.index, \obs, 0);
@@ -287,7 +289,8 @@ s.waitForBoot{
 				switch( mode,
 					0, {
 						s.sendMsg(\n_set, 8000+gr, \gate, 0);
-						procfx.sendMsg("/slclear");
+						//procfx.sendMsg("/slclear");
+						fork{6.do{|ix| procfx.sendMsg("/rmsl", ix.asInteger); 0.1.wait;}};
 					},
 					1, {
 						s.sendMsg( \s_new, lbl, 8000+gr, 0, g2.nodeID, \ibs, sampbus.index);
@@ -331,7 +334,8 @@ s.waitForBoot{
 				switch( mode,
 					0, {
 						s.sendMsg(\n_set, 9000+gr, \gate, 0);
-						procfx.sendMsg("/slclear");
+						//procfx.sendMsg("/slclear");
+						fork{1.do{|ix| procfx.sendMsg("/rmsl", ix.asInteger); 0.1.wait;}};
 						procfx.sendMsg("/rmvbt", 100);
 					},
 					1, {
@@ -435,4 +439,5 @@ s.waitForBoot{
 	}
 }
 )
-
+n = NetAddr("127.0.0.1", 12322);
+n.sendMsg("/rmsl", 1);
